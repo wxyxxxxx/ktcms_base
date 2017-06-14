@@ -190,5 +190,16 @@ function get_operation(){
 
 
 
+function upload_set($rule=''){
+	$arr=json_decode($rule,true);
+	if (!isset($arr['size'])) {
+		$arr['size']='999999999';
+	}
+	if (!isset($arr['file_type'])) {
+		$arr['file_type']='*.*';
+	}
+	return $arr;
+}
+
 
 

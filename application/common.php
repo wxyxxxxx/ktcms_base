@@ -70,6 +70,11 @@ function get_data_from($data_from){
 function filter_input_data($data,$fields){
 	
 	foreach ($fields as $key => $e) {
+		if ($e['is_allow_null']==1) {
+			if (!isset($data[$e['field']])||empty($data[$e['field']])) {
+				ejson(-1,$e['name'].'不能为空');
+			}
+		}
 		if ($e['edit_type']==7||$e['edit_type']==5||$e['edit_type']==16) {
 			if(isset($data[$e['field']])){
 				$data[$e['field']]=implode(',', $data[$e['field']]);

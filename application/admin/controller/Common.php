@@ -223,17 +223,22 @@ class common extends Controller
     if ($id>0) {
       # code...
     }else{
-      $refer=$_SERVER['HTTP_REFERER'];
-      $refer=parse_url($refer);
-      $refer=explode('&', $refer['query']);
-      foreach ($refer as $key => $e) {
-        $arr88=explode('=', $e);
-        if ($arr88[0]!='menu_id') {
-         
-            $arr[$arr88[0]]=$arr88[1];
-          
+      if (isset($_SERVER['HTTP_REFERER'])) {
+        
+      
+        $refer=$_SERVER['HTTP_REFERER'];
+        $refer=parse_url($refer);
+        $refer=explode('&', $refer['query']);
+        foreach ($refer as $key => $e) {
+          $arr88=explode('=', $e);
+          if ($arr88[0]!='menu_id') {
+           
+              $arr[$arr88[0]]=$arr88[1];
             
+              
+          }
         }
+
       }
     }
     

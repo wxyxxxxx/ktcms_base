@@ -28,9 +28,11 @@
                         <th>数据源</th>
                         <th>验证规则</th>
                         <th>顺序</th>
+                        
                         <th>显示</th>
                         <th>编辑</th>
                         <th>搜索</th>
+                        <th>不为空</th>
                         
                         
                             
@@ -73,6 +75,7 @@
                     <td><input type="checkbox" name="" checked value="1"></td>
                     <td><input type="checkbox" name="" checked value="1"></td>
                     <td><input type="checkbox" name="" checked value="1"></td>
+                    <td><input type="checkbox" name="" checked value="1"></td>
                     <td>
                     <div class="btn-group hidden-xs" id="exampleTableEventsToolbar" role="group"> 
                     <a cz="1" aid="0" onclick="javascript:w_save(this)" class="btn btn-primary btn-sm w_bc">保存</a>
@@ -109,12 +112,15 @@
                         <td><input type="text" name="" value="{$vo.remark}"></td>
                         <td><input style="width: 50px" type="text" name="" value="{$vo.width}"></td>
                         <td><input type="text" name="" value="{$vo.data_from}">&nbsp;<button onclick="javascript:w_source_data(this)">+</button></td>
-                        <td><input type="text" name="" value="{$vo.rule}"></td>
+                        <td><input type="text" name="" value='{$vo.rule}'></td>
                         <td><input style="width: 50px" type="number" name="" value="{$vo.sort}"></td>
+                        
                         <td><input type="checkbox" name="" {eq name="vo.is_display" value="1"} checked{/eq} value="1"></td>
                         <td><input type="checkbox" name="" {eq name="vo.is_edit" value="1"} checked{/eq} value="1"></td>
                         <td><input type="checkbox" name="" {eq name="vo.is_search" value="1"} checked{/eq} value="1"></td>
+                         <td><input type="checkbox" name="" {eq name="vo.is_allow_null" value="1"} checked{/eq} value="1"></td>
                         <td>
+                       
                         <div class="btn-group hidden-xs" id="exampleTableEventsToolbar" role="group"> 
                         <a cz="1" aid="{$vo.id}" onclick="javascript:w_save(this)" class="btn btn-primary btn-sm w_bc">保存</a>
                         <a cz="1" aid="{$vo.id}" onclick="javascript:w_del(this)" class="btn btn-danger btn-sm w_bc">删除</a>
@@ -182,9 +188,14 @@ function w_save(e){
     }else{
         var is_search=0;
     }
+    if (tdarr[12].firstChild.checked) {
+        var is_allow_null=1;
+    }else{
+        var is_allow_null=0;
+    }
 
     console.log(is_display);
-    $.post("{:url('admin/develop/save_model_fields')}?id="+aid,{field:field,name:name,edit_type:edit_type,default:wdefault,remark:remark,rule:rule,sort:sort,model_id:model_id,data_from:data_from,width:width,is_display:is_display,is_edit:is_edit,is_search:is_search},function(res){
+    $.post("{:url('admin/develop/save_model_fields')}?id="+aid,{field:field,name:name,edit_type:edit_type,default:wdefault,remark:remark,rule:rule,sort:sort,model_id:model_id,data_from:data_from,width:width,is_display:is_display,is_edit:is_edit,is_search:is_search,is_allow_null:is_allow_null},function(res){
         res=eval("("+res+")");
         if (res.code==1) {
             e.setAttribute("aid",res.data.id);
