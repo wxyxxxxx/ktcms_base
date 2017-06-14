@@ -26,7 +26,11 @@ class admin extends Common
      }
 
 
-
+     public function test(){
+        $arr['size']=1000;
+        $arr['file_type']='*.ppt;*.pptx;*.png;*.jpeg;*.jpg;*.PNG';
+        echo json_encode($arr);exit;
+     }
 
 	
 	
