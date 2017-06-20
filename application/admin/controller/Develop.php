@@ -133,7 +133,7 @@ class develop extends Controller
           $op="CHANGE `".$data['old_field']."`";
         }
         if ($data['default']=='') {
-          $default='';
+          $default='DEFAULT NULL';
         }else{
           $default="DEFAULT '".$data['default']."'";
         }

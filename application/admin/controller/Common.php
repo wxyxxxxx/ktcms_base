@@ -63,6 +63,10 @@ class common extends Controller
         if ($admin_id>0) {
            $admin_name=session("account");
            $arr=db("sys_admin")->alias("a")->join("kt_sys_role b","a.role_id=b.id")->where("a.id",$admin_id)->field("a.account,a.id,a.role_id,b.auth_ids,b.name as role_name")->find();
+
+           // if ($admin_id==1) {
+             
+           // }
            session('admin',$arr);
            $this->assign("arr",$arr);
            $this->assign("admin_name",$admin_name);
@@ -144,6 +148,7 @@ class common extends Controller
 
 
 
+       ob_end_clean();
        header("Pragma: public");
        header("Expires: 0");
        header("Cache-Control:must-revalidate, post-check=0, pre-check=0");
@@ -151,10 +156,9 @@ class common extends Controller
        header("Content-Type:application/vnd.ms-execl");
        header("Content-Type:application/octet-stream");
        header("Content-Type:application/download");;
-       header('Content-Disposition:attachment;filename='.date("YmdHis").'.xls');
+       header('Content-Disposition:attachment;filename='.date("YmdHis").'.xlsx');
        header("Content-Transfer-Encoding:binary");
-
-
+       ob_clean();
        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
        $objWriter->save('php://output');
        exit("导出成功");
@@ -189,7 +193,7 @@ class common extends Controller
       }
       $search_fields=rtrim($search_fields,',');
       if ($model['table']!='') {
-          $arr=db($model['table'])->where($where)->field($search_fields)->paginate(10,false,['query'=>$input]);
+          $arr=db($model['table'])->where($where)->field($search_fields)->paginate(20,false,['query'=>$input]);
       }else{
           $arr=[];
       }

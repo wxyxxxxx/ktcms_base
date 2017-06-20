@@ -25,6 +25,19 @@ class admin extends Common
         return $this->fetch();
      }
 
+     public function gdr(){
+        $dir=ROOT_PATH.'public/templets/default/index/';
+        $arr=[];
+        // $res=folder_list($dir);
+        $res=glob($dir.'*.html');
+        foreach ($res as $key => &$e) {
+            $e=str_replace($dir, '', $e);
+            $e=str_replace('.html', '', $e);
+        }
+        unset($e);
+        dump($res);
+     }
+
 
      public function test(){
         $arr['size']=1000;

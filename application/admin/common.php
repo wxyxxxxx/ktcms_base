@@ -41,12 +41,26 @@ function get_admin_menus(){
   	$menu_ids[]=$key;
   }
   unset($e);
-  $arr_top=db("sys_menu")->distinct(true)->where("status",1)->where("id",'in',$menu_ids)->field("up_id")->select();
+
+ if ($admin['id']==0) {
+ 	$arr66=db("sys_menu")->where("status",1)->field("id")->select();
+ 	foreach ($arr66 as $key => $e) {
+ 		$menu_ids[]=$e['id'];
+ 	}
+ 	// $where="1=1";
+ 	$where['id']=['in',$menu_ids];
+ }else{
+ 	$where['id']=['in',$menu_ids];
+ }
+  $arr_top=db("sys_menu")->distinct(true)->where("status",1)->where($where)->field("up_id")->select();
+
+  // dump($menu_ids);exit;
   foreach ($arr_top as $key => $e) {
   	$menu_ids[]=$e['up_id'];
   }
   unset($e);
-  $arr2=db("sys_menu")->where("status",1)->where("id",'in',$menu_ids)->order("sort asc")->select();
+
+  $arr2=db("sys_menu")->where("status",1)->where('id','in',$menu_ids)->order("sort asc")->select();
   // dump($arr2);exit;
   $new_arr=digui_menu($arr2);
   // dump($new_arr);exit;
@@ -140,27 +154,27 @@ function digui_menu($arr2=array()){
 
 function case_model_id($model_id=0,$id=0,$data=array()){
 	$time=time();
-	switch ($model_id) {
-		case '1':
-		return;
-			$arr=$data['operation'];
-			$arr=explode(',', $arr);
-			// $data=[];
-			foreach ($arr as $key => $e) {
-				$data=['menu_id'=>$id,'operation_id'=>$e,'c_time'=>$time];
-				$arr=db("sys_auth")->where("menu_id",$id)->where("operation_id",$e)->find();
-				if (!$arr) {
-					db("sys_auth")->insert($data);
-				}
-			}
-			// db("sys_auth")->insertAll($data);
-			unset($e);
-			break;
+	// switch ($model_id) {
+	// 	case '1':
+	// 	return;
+	// 		$arr=$data['operation'];
+	// 		$arr=explode(',', $arr);
+	// 		// $data=[];
+	// 		foreach ($arr as $key => $e) {
+	// 			$data=['menu_id'=>$id,'operation_id'=>$e,'c_time'=>$time];
+	// 			$arr=db("sys_auth")->where("menu_id",$id)->where("operation_id",$e)->find();
+	// 			if (!$arr) {
+	// 				db("sys_auth")->insert($data);
+	// 			}
+	// 		}
+	// 		// db("sys_auth")->insertAll($data);
+	// 		unset($e);
+	// 		break;
 		
-		default:
-			# code...
-			break;
-	}
+	// 	default:
+	// 		# code...
+	// 		break;
+	// }
 }
 
 
@@ -201,5 +215,36 @@ function upload_set($rule=''){
 	return $arr;
 }
 
+/**
+ * 
+ * 遍历文件夹目录
+ * @param $dir 遍历路径
+ * @author jourmy@hotmail.com 
+ */
+function folder_list($dir){
+     $dir .= substr($dir, -1) == '/' ? '' : '/';
+     $dirInfo = array();
+    foreach (glob($dir.'*') as $v) {
+          $dirInfo[] = $v; 
+          if(is_dir($v)){
+              $dirInfo = array_merge($dirInfo, folder_list($v));
+          }
+        }
+ return $dirInfo;
+}
 
 
+function get_templet(){
+	$dir=ROOT_PATH.'public/templets/default/index/';
+	$arr=[];
+	// $res=folder_list($dir);
+	$res=glob($dir.'*.html');
+
+	foreach ($res as $key => &$e) {
+	    $e=str_replace($dir, '', $e);
+	    $e=str_replace('.html', '', $e);
+	    $arr[]=['id'=>$e,'name'=>$e];
+	}
+	unset($e);
+	return $arr;
+}

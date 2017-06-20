@@ -58,3 +58,7 @@ use think\Db;
         $arr=db($table)->select();
         return $arr;
     }
+    function gtd($table=''){
+        $arr=db($table)->select();
+        return $arr;
+    }

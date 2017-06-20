@@ -68,9 +68,13 @@
             {/volist}
                             <div class="form-group">
                                 <div class="col-sm-4 col-sm-offset-1">
+
                                     <a class="btn btn-primary btn-block w_sb" href="javascript:void(0);">保存内容</a>
                                     <!-- <a class="btn btn-white" href="{:url('admin/admin/game_no_list')}">返回列表</a>   -->
                                 </div>
+                                <div class="col-sm-4 col-sm-offset-1">
+                                <a class="btn btn-primary btn-block w_qx" href="javascript:void(0);">全选</a>
+                                 </div>
                             </div>
                         </form>
                     </div>
@@ -95,6 +99,17 @@
             toastr.error(res.msg);return false;
         }
       })
+    })
+
+    $(".w_qx").click(function(){
+      $(".i-checks").each(function(){
+        var p=$(this);
+        if (p.children().hasClass("checked")) {
+
+        }else{
+          p.click();
+        }
+      });
     })
   })
 </script>
