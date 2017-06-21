@@ -27,9 +27,14 @@
     }
     ?>
    
+
     
     </div>
        <button onClick="javascript:location.reload()" type="button" style="float:right" class="btn btn-primary btn-sm">刷新页面</button>
+       {notempty name="menu.remark"}
+       <div class="alert alert-success">{$menu.remark}</div>
+       {/notempty}
+        
      <div class="row row-lg"> 
       <div class="col-sm-12"> 
        <!-- Example Events --> 

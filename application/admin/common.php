@@ -215,6 +215,17 @@ function upload_set($rule=''){
 	return $arr;
 }
 
+
+function get_nav(){
+	$arr=db("nav")->order("sort asc")->select();
+	foreach ($arr as $key => &$e) {
+		$e['parent_id']=$e['up_id'];
+	}
+	unset($e);
+	$res=make_option_tree_for_select($arr);
+	return $res;
+	// dump($res);exit;
+}
 /**
  * 
  * 遍历文件夹目录
@@ -247,4 +258,112 @@ function get_templet(){
 	}
 	unset($e);
 	return $arr;
+}
+
+
+function make_tree($arr){
+    if(!function_exists('make_tree1')){
+        function make_tree1($arr, $parent_id=0){
+            $new_arr = array();
+
+            foreach($arr as $k=>$v){
+            	// dump($v);exit;
+                if($v['parent_id'] == $parent_id){
+                    $new_arr[] = $v;
+                    unset($arr[$k]);
+                }
+            }
+            foreach($new_arr as &$a){
+                $a['children'] = make_tree1($arr, $a['id']);
+            }
+            return $new_arr;
+        }
+    }
+    return make_tree1($arr);
+}
+ 
+function make_tree_with_namepre($arr)
+{
+    $arr = make_tree($arr);
+    if (!function_exists('add_namepre1')) {
+        function add_namepre1($arr, $prestr='') {
+            $new_arr = array();
+            foreach ($arr as $v) {
+                if ($prestr) {
+                    if ($v == end($arr)) {
+                        $v['name'] = $prestr.'└─ '.$v['name'];
+                    } else {
+                        $v['name'] = $prestr.'├─ '.$v['name'];
+                    }
+                }
+ 
+                if ($prestr == '') {
+                    $prestr_for_children = '　 ';
+                } else {
+                    if ($v == end($arr)) {
+                        $prestr_for_children = $prestr.'　　 ';
+                    } else {
+                        $prestr_for_children = $prestr.'│　 ';
+                    }
+                }
+                $v['children'] = add_namepre1($v['children'], $prestr_for_children);
+ 
+                $new_arr[] = $v;
+            }
+            return $new_arr;
+        }
+    }
+    return add_namepre1($arr);
+}
+ 
+/**
+ * @param $arr
+ * @param int $depth，当$depth为0的时候表示不限制深度
+ * @return string
+ */
+
+function make_option_tree_for_select($arr, $depth=0)
+{
+    $arr = make_tree_with_namepre($arr);
+    if (!function_exists('make_options1')) {
+        function make_options1($arr, $depth, $recursion_count=0, $ancestor_ids='') {
+            $recursion_count++;
+            $str = [];
+            foreach ($arr as $v) {
+                $str[]= ['id'=>$v['id'],'name'=>$v['name']];
+                if ($v['parent_id'] == 0) {
+                    $recursion_count = 1;
+                }
+                if ($depth==0 || $recursion_count<$depth) {
+                    // = ;
+                    $str=array_merge($str,make_options1($v['children'], $depth, $recursion_count, $ancestor_ids.','.$v['id']));
+                }
+    
+            }
+            return $str;
+        }
+    }
+    return make_options1($arr, $depth);
+}
+function make_option_tree_for_select22($arr, $depth=0)
+{
+    $arr = make_tree_with_namepre($arr);
+    if (!function_exists('make_options1')) {
+        function make_options1($arr, $depth, $recursion_count=0, $ancestor_ids='') {
+            $recursion_count++;
+            $str = '';
+            foreach ($arr as $v) {
+                $str .= "<option value='{$v['id']}' data-depth='{$recursion_count}' data-ancestor_ids='".ltrim($ancestor_ids,',')."'>{$v['name']}</option>";
+                if ($v['parent_id'] == 0) {
+                    $recursion_count = 1;
+                }
+                if ($depth==0 || $recursion_count<$depth) {
+                    $str .= make_options1($v['children'], $depth, $recursion_count, $ancestor_ids.','.$v['id']);
+                }
+ 
+            }
+            return $str;
+        }
+    }
+    return make_options1($arr, $depth);
 }

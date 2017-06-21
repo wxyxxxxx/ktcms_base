@@ -114,7 +114,11 @@ function get_list_show($str,$data_from){
 		}
 
 	}
-	return rtrim($res,',');
+	$res=rtrim($res,',');
+	if ($res=='') {
+		$res='——————';
+	}
+	return $res;
 }
 
 function get_menu($menu_id=0){
@@ -127,7 +131,12 @@ function get_model($model_id=0){
 function get_fields($model_id=0,$where){
 	return db("sys_fields")->where("model_id",$model_id)->where($where)->order("sort asc")->select();
 }
-
+function get_sys_config(){
+	return db("sys_config")->where("status",1)->find();
+}
+function get_sys_set(){
+	return db("sys_set")->where("status",1)->find();
+}
 // function get_sys_operation(){
 // 	return db("sys_operation")->select();
 // }

@@ -1,74 +1,25 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>联系我们</title>
-<meta name="keywords" content="">
-<meta name="description" content="">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
-<link rel="stylesheet" type="text/css" href="css/style.css"/>
-<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_a4xr4qczpyvqjjor.css"/>
-</head>
-<body>
-	<!--头部-->
-	<div class="top hidden-xs">
-		<div class="container">
-			<div class="pull-right">
-				<div class="email">电子邮箱：<i>www.ygbly.com</i></div>
-				<div class="phone">客服热线：<i>0371-60908918</i></div>
-			</div>
-		</div>
-	</div>
-	<!--导航-->
-	<div class="container">
-		<div class="navbar" role="navigation">
-			<div class="logo  pull-left">
-				<a href="index.html"><img src="images/logo.png"/></a>
-				<span>高端有机功能型液肥</span>
-			</div>
-			<div class="navbar-header">
-				<div class="nav-phone">
-				<ul>
-					<li class="on"><a href="index.html">首页</a></li>
-					<li><a href="about.html">关于我们</a></li>
-					<li><a href="product.html">产品中心</a></li>
-					<li><a href="news.html">新闻资讯</a></li>
-					<li><a href="contact.html">联系我们</a></li>
-				</ul>
-				</div>
-				<button class="navbar-toggle">
-				<span class="icon-bar bg-info"></span>
-				<span class="icon-bar bg-info"></span>
-				</button>
-			</div>
-			<ul class="nav navbar-nav hidden-xs">
-				<li class="on"><a href="index.html">首页</a></li>
-				<li><a href="about.html">关于我们</a></li>
-				<li><a href="product.html">产品中心</a></li>
-				<li><a href="news.html">新闻资讯</a></li>
-				<li><a href="contact.html">联系我们</a></li>
-			</ul>
-			<form class="searchStyle_2">
-				<input class="searchStyle_2" type="text" placeholder="请输入关键字">
-				<button type="submit"><i class="iconfont icon-fangdajing"></i></button>
-			</form>
-		</div>
-	</div>
-	<!--内页banner-->
+{extend name="index/base" /}
+
+{block name="main"}
+
 	<div class="ny-banner">
-		<img src="images/ny-banner3.jpg"/>
+		<img src="{$nav['img']}"/>
 		<div class="view">
-			<h2>联系我们</h2>
-			<h3><i>Contact Us</i></h3>
+			<h2>{$nav['name']}</h2>
+			<h3><i>{$nav['sub_name']}</i></h3>
 		</div>
 	</div>
+<!--内页banner-->
+
 	<div class="container contact-box">
 		<div class="ny-nav">
 			<ul>
-				<li><a href="">首页</a></li>
-				<span>&gt;</span>
-				<li><a href="">联系我们</a></li>
+			<li><a href="{:url('index/index')}">首页</a></li>
+			
+			{volist name="up_nav" id="vo"}
+			<span>&gt;</span>
+			<li><a href="{:url('index/index',['id'=>$vo['id']])}">{$vo.name}</a></li>
+			{/volist}
 			</ul>
 		</div>
 		<div class="map">
@@ -78,193 +29,61 @@
 			<div class="pull-left">
 				<h2>联系我们</h2>
 				<ul>
-					<li>全国客服热线：0371-60908918</li>
-					<li>传真：0371-60908918</li>
-					<li>地址：郑东新区商务内环十号楼东方国际</li>
-					<li>电子邮箱：oko@mail.com</li>
+					<li>全国客服热线：{$sys.tel}</li>
+					<li>传真：{$sys.fax}</li>
+					<li>地址：{$sys.address}</li>
+					<li>电子邮箱：{$sys.email}</li>
 				</ul>
 			</div>
 			<div class="pull-right">
 				<h2>在线留言</h2>
 				<div class="last">
 					<span>电子邮箱：</span>
-					<input type="" name="" id="" value="" placeholder="请输入您的电子邮箱..." />
+					<input type="" name="" id="w_email" value="" placeholder="请输入您的电子邮箱..." />
 				</div>
 				<div class="last">
 					<span>留言内容：</span>
-					<textarea name="" rows="" cols="" placeholder="请输入留言内容..."></textarea>
+					<textarea name="" rows="" id="w_content" cols="" placeholder="请输入留言内容..."></textarea>
 				</div>
 				<div class="liuyan-btn">
 					<span>感谢您的留言，我们会尽快回复您！</span>
-					<input type="submit" name="" id="" value="提交" />
+					<input type="submit" name="" id="w_sb" value="提交" />
 				</div>
 			</div>
 		</div>
 	</div>
-	<!--页尾-->
-	<footer>
-		<div class="footer-top">
-			<div class="container">
-				<div class="row">
-					<div class="col-xs-6 col-sm-6 col-md-3">
-						<div class="pull-left">
-							<img src="images/footer1.png" alt="" />
-						</div>
-						<div class="pull-right">
-							<h3>碧果液肥</h3>
-							<h4>高端型技能液肥</h4>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-6 col-md-3">
-						<div class="pull-left">
-							<img src="images/footer2.png" alt="" />
-						</div>
-						<div class="pull-right">
-							<h3>我们的目标</h3>
-							<h4>争做全领先品牌</h4>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-6 col-md-3">
-						<div class="pull-left">
-							<img src="images/footer3.png" alt="" />
-						</div>
-						<div class="pull-right">
-							<h3>质量保证</h3>
-							<h4>通过国家HDO质量认证</h4>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-6 col-md-3">
-						<div class="pull-left">
-							<img src="images/footer4.png" alt="" />
-						</div>
-						<div class="pull-right">
-							<h3>售后服务</h3>
-							<h4>让您更放心</h4>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="footer-b">
-			<div class="container">
-				<div class="pull-left footer-about">
-					<h2>BIGUO碧果液肥</h2>
-					<p>英国碧绿源作物营养保护有限公司是、研发、生产、销售为一体的国际集团。跟法国瑞士有机农业研究是长期的战略合作伙伴。 公司前期是英国有机农业研究所，成立于1872年。1955年成立碧绿源作物营养保护有限公司，一直致力于有机生态农业的发展</p>
-				</div>
-				<div class="pull-left footer-product">
-					<div class="row">
-						<div class="col-sm-6 col-md-4">
-							<div class="thumbnail">
-								<img src="images/caomei.jpg"/>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-4">
-							<div class="thumbnail">
-								<img src="images/caomei2.jpg"/>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-4">
-							<div class="thumbnail">
-								<img src="images/caomei3.jpg"/>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-4">
-							<div class="thumbnail">
-								<img src="images/caomei4.jpg"/>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-4">
-							<div class="thumbnail">
-								<img src="images/caomei.jpg"/>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-4">
-							<div class="thumbnail">
-								<img src="images/caomei2.jpg"/>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="pull-left contact">
-					<ul>
-						<li>
-							<img src="icon/phone.png"/>
-							<span>0371-60908918</span>
-						</li>
-						<li>
-							<img src="icon/email.png"/>
-							<span>www.ygbly.com</span>
-						</li>
-						<li>
-							<img src="icon/fax.png"/>
-							<span>0371-60908918</span>
-						</li>
-						<li>
-							<img src="icon/adress.png"/>
-							<span>郑东新区商务内环十号楼东方国际702室</span>
-						</li>
-					</ul>
-				</div>
-				<div class="pull-right footer-weixin">
-					<img src="images/weixin.png"/>
-					<p>关注微信公众号，<br />碧果液肥给您惊喜！</p>
-				</div>
-			</div>
-		</div>
-		<div class="footer-c">
-			<div class="container">
-				<div class="pull-left">
-					<span><a href="">www.ygbly.com</a></span>
-				</div>
-				<div class="pull-right">
-					<ul>
-						<li><a href="index.html">首页</a></li>
-						<li><a href="about.html">关于我们</a></li>
-						<li><a href="product.html">产品中心</a></li>
-						<li><a href="news.html">新闻资讯</a></li>
-						<li><a href="contact.html">联系我们</a></li>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</footer>
-	<!--右侧聊天-->
-	<div class="right-box">
-		<div class="button searchStyle_2">
-			<img src="images/member-1-white.png"/>
-			在线客服
-			<img src="images/links-6-white-rev.png"/>
-		</div>
-		<div class="online-service searchStyle_2">
-			<i class="glyphicon glyphicon-remove"></i>
-			<div class="ol-list">
-				<a href=""><img src="images/button_121.gif"/>客服QQ</a>
-			</div>
-			<div class="ol-list">
-				<a>热线:0756-3838XXX</a>
-			</div>
-			<div class="ol-list">
-				<a>E-mail:oko@mail.com</a>
-			</div>
-			<div class="ol-list">
-				<a>传真:0756-3838XXX</a>
-			</div>
-		</div>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
-<script src="js/jquery.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/bootstrap.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/style.js" type="text/javascript" charset="utf-8"></script>
+
+		{/block}
+		
+		
+	{block name="diy_js"}
+<script src="/templets/default/index/layer/layer.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		$(function(){
+			$("#w_sb").click(function(){
+				var email=$("#w_email").val();
+		
+				var content=$("#w_content").val();
+	
+				if (email=='') {layer.msg("电子邮箱不能为空");return false;}
+			
+				if (content=='') {layer.msg("留言内容不能为空");return false;}
+				$.post("{:url('index/add_suggest')}",{email:email,content:content},function(res){
+					var res=eval("("+res+")");
+					layer.msg(res.msg);
+					if (res.code==1) {
+						$("#w_email").val('');
+					
+						$("#w_content").val('');
+					}else{
+
+					}
+				})
+			})
+		})
+	</script>
+
 <script type="text/javascript" src="http://api.map.baidu.com/api?key=&v=1.1&services=true"></script>
 <script type="text/javascript">
     //创建和初始化地图函数：
@@ -277,10 +96,11 @@
     //创建地图函数：
     function createMap(){
         var map = new BMap.Map("dituContent");//在百度地图容器中创建一个地图
-        var point = new BMap.Point(113.733265,34.778315);//定义一个中心点坐标
+        var point = new BMap.Point({$sys.long},{$sys.lat});//定义一个中心点坐标
         map.centerAndZoom(point,15);//设定地图的中心点和坐标并将地图显示在地图容器中
         window.map = map;//将map变量存储在全局
     }
+    
     
     //地图事件设置函数：
     function setMapEvent(){
@@ -306,5 +126,5 @@
     
     initMap();//创建和初始化地图
 </script>
-</body>
-</html>
+
+{/block}

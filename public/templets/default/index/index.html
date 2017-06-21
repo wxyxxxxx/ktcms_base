@@ -1,86 +1,24 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>首页</title>
-<meta name="keywords" content="">
-<meta name="description" content="">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
-<link rel="stylesheet" type="text/css" href="css/style.css"/>
-<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_a4xr4qczpyvqjjor.css"/>
-</head>
-<body>
-	<!--头部-->
-	<div class="top hidden-xs">
-		<div class="container">
-			<div class="pull-right">
-				<div class="email">电子邮箱：<i>www.ygbly.com</i></div>
-				<div class="phone">客服热线：<i>0371-60908918</i></div>
-			</div>
-		</div>
-	</div>
-	<!--导航-->
-	<div class="container">
-		<div class="navbar" role="navigation">
-			<div class="logo  pull-left">
-				<a href="index.html"><img src="images/logo.png"/></a>
-				<span>高端有机功能型液肥</span>
-			</div>
-			<div class="navbar-header">
-				<div class="nav-phone">
-				<ul>
-					<li class="on"><a href="index.html">首页</a></li>
-					<li><a href="about.html">关于我们</a></li>
-					<li><a href="product.html">产品中心</a></li>
-					<li><a href="news.html">新闻资讯</a></li>
-					<li><a href="contact.html">联系我们</a></li>
-				</ul>
-				</div>
-				<button class="navbar-toggle">
-				<span class="icon-bar bg-info"></span>
-				<span class="icon-bar bg-info"></span>
-				</button>
-			</div>
-			<ul class="nav navbar-nav hidden-xs">
-				<li class="on"><a href="index.html">首页</a></li>
-				<li><a href="about.html">关于我们</a></li>
-				<li><a href="product.html">产品中心</a></li>
-				<li><a href="news.html">新闻资讯</a></li>
-				<li><a href="contact.html">联系我们</a></li>
-			</ul>
-			<form class="searchStyle_2">
-				<input class="searchStyle_2" type="text" placeholder="请输入关键字">
-				<button type="submit"><i class="iconfont icon-fangdajing"></i></button>
-			</form>
-		</div>
-	</div>
-	<!--banner-->
+{extend name="index/base" /}
+{block name="title"}{/block}
+{block name="main"}
+
 	<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
 		<!-- Indicators -->
 		<ol class="carousel-indicators">
-			<li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-			<li data-target="#carousel-example-generic" data-slide-to="1"></li>
-			<li data-target="#carousel-example-generic" data-slide-to="2"></li>
+		{volist name=":str_to_arr($nav['img'])" id="vo"}
+			<li data-target="#carousel-example-generic" data-slide-to="0" {eq name="i" value='1'}class="active"{/eq}></li>
+		{/volist}	
 		</ol>
 	
 		<!-- Wrapper for slides -->
 		<div class="carousel-inner" role="listbox">
-			<div class="item active">
-				<img src="images/banner.jpg" alt="...">
+			{volist name=":str_to_arr($nav['img'])" id="vo"}
+			<div class="item {eq name='i' value='1'}active{/eq}">
+				<img src="{$vo}" alt="...">
 				<div class="carousel-caption">
 				</div>
 			</div>
-			<div class="item">
-				<img src="images/banner2.jpg" alt="...">
-				<div class="carousel-caption">
-				</div>
-			</div>
-			<div class="item">
-				<img src="images/banner3.jpg" alt="...">
-				<div class="carousel-caption">
-				</div>
-			</div>
+			{/volist}
 		</div>
 		<!-- Controls -->
 		<a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
@@ -108,210 +46,28 @@
 		<div class="product-con">
 			<div class="hd">
 				<ul>
-					<li class="on">果树专用肥</li>
-					<li>大量元素水溶肥料</li>
-					<li>中量元素水溶肥料</li>
+				{volist name=":get_sub_nav(4)" id="vo" key="k"}
+				<li {eq name="k" value="1"}class="on"{/eq}>{$vo.name}</li>
+				{/volist}
 				</ul>
 			</div>
 			<div class="bd">
+
+
+			{volist name=":get_sub_nav(4)" id="vo" key="k"}
 				<div class="row">
+				{volist name=":get_list($vo['id'])" id="n"}
 					<div class="col-xs-6 col-sm-3 col-md-3">
 						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
+							<a href="{:url('index/detail',['id'=>$vo['id']])}">
+								<img src="{$n.thumb}" alt="...">
+								<div class="caption">{$n.title}</div>
 							</a>
 						</div>
 					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei2.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei3.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei4.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei4.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei3.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei2.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
+				{/volist}
 				</div>
-				<div class="row">
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei4.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei3.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei2.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei2.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei3.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei4.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei2.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei3.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei4.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei4.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei3.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei2.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-3 col-md-3">
-						<div class="thumbnail">
-							<a href="product-ny.html">
-								<img src="images/caomei.jpg" alt="...">
-								<div class="caption">碧果—草莓专用液肥</div>
-							</a>
-						</div>
-					</div>
-				</div>
+			{/volist}
 			</div>
 		</div>
 	</div>
@@ -346,57 +102,30 @@
 		<div class="pull-left" id="bgzs">
 			<div class="bd">
 				<ul>
-					<li><a href=""><img src="images/lajiao.jpg"/></a></li>
-					<li><a href=""><img src="images/lajiao2.jpg"/></a></li>
-					<li><a href=""><img src="images/lajiao3.jpg"/></a></li>
+				{volist name=":get_imgs(6)" id="vo"}
+					<li><a href=""><img src="{$vo.img_url}"/></a></li>
+				{/volist}
 				</ul>
 			</div>
 			<div class="hd">
 				<ul>
-					<li></li>
-					<li></li>
-					<li></li>
+					{volist name=":get_imgs(6)" id="vo"}
+						<li></li>
+					{/volist}
 				</ul>
 			</div>
 		</div>
 		<div class="pull-right">
 			<div class="row">
+
+			{volist name=":get_imgs(7)" id="vo"}
 				<div class="col-xs-6 col-sm-4 col-md-4">
 					<div class="thumbnail">
-						<a href="product-ny.html"><img src="images/caomei4.jpg"/></a>
+						<a href="{$vo.link}"><img src="{$vo.img_url}"/></a>
 						<div class="bj"></div>
 					</div>
 				</div>
-				<div class="col-xs-6 col-sm-4 col-md-4">
-					<div class="thumbnail">
-						<a href="product-ny.html"><img src="images/caomei3.jpg"/></a>
-						<div class="bj"></div>
-					</div>
-				</div>
-				<div class="col-xs-6 col-sm-4 col-md-4">
-					<div class="thumbnail">
-						<a href="product-ny.html"><img src="images/caomei2.jpg"/></a>
-						<div class="bj"></div>
-					</div>
-				</div>
-				<div class="col-xs-6 col-sm-4 col-md-4">
-					<div class="thumbnail">
-						<a href="product-ny.html"><img src="images/caomei.jpg"/></a>
-						<div class="bj"></div>
-					</div>
-				</div>
-				<div class="col-xs-6 col-sm-4 col-md-4">
-					<div class="thumbnail">
-						<a href="product-ny.html"><img src="images/caomei4.jpg"/></a>
-						<div class="bj"></div>
-					</div>
-				</div>
-				<div class="col-xs-6 col-sm-4 col-md-4">
-					<div class="thumbnail">
-						<a href="product-ny.html"><img src="images/caomei3.jpg"/></a>
-						<div class="bj"></div>
-					</div>
-				</div>
+			{/volist}
 			</div>
 		</div>
 	</div>
@@ -406,249 +135,30 @@
 			<h2>最新资讯<span>LASTEST IMFORMATION</span></h2>
 		</div>
 		<div class="row news-con">
+{volist name=":get_news(1,'p_time',3)" id="vo"}
 			<div class="col-xs-12 col-sm-12 col-md-4">
 				<div class="thumbnail">
-					<a href=""><img src="images/news1.jpg" alt="" /></a>
+					<a href="{:url('index/detail',['id'=>$vo['id']])}"><img src="{$vo.thumb}" alt="" /></a>
 					<div class="caption">
 						<div class="news-title">
 							<div class="news-name">
-								<a href="news-ny.html">我们的生活没有假期，没有四季，只有两季！不努力就是淡季！旺季腰痛，淡季头痛！我们...</a>
+								<a href="{:url('index/detail',['id'=>$vo['id']])}">{$vo.title}...</a>
 							</div>
 							<div class="news-datail">
-								我们的生活没有假期，没有四季，只有两季！不努力就是淡季！旺季腰痛，淡季头痛！我们...
+								{$vo.desc}
 							</div>
 						</div>
 						<div class="news-b">
 							<div class="pull-right">
-								<span class="new-sort">最新资讯</span>
-								<span class="news-time">2017-05-06</span>
+								<span class="new-sort">{$vo.tname}</span>
+								<span class="news-time">{$vo.p_time|date="Y-m-d",###}</span>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="col-xs-12 col-sm-12 col-md-4">
-				<div class="thumbnail">
-					<a href=""><img src="images/news2.jpg" alt="" /></a>
-					<div class="caption">
-						<div class="news-title">
-							<div class="news-name">
-								<a href="news-ny.html">我们的生活没有假期，没有四季，只有两季！不努力就是淡季！旺季腰痛，淡季头痛！我们...</a>
-							</div>
-							<div class="news-datail">
-								我们的生活没有假期，没有四季，只有两季！不努力就是淡季！旺季腰痛，淡季头痛！我们...
-							</div>
-						</div>
-						<div class="news-b">
-							<div class="pull-right">
-								<span class="new-sort">最新资讯</span>
-								<span class="news-time">2017-05-06</span>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="col-xs-12 col-sm-12 col-md-4">
-				<div class="thumbnail">
-					<a href=""><img src="images/news3.jpg" alt="" /></a>
-					<div class="caption">
-						<div class="news-title">
-							<div class="news-name">
-								<a href="news-ny.html">我们的生活没有假期，没有四季，只有两季！不努力就是淡季！旺季腰痛，淡季头痛！我们...</a>
-							</div>
-							<div class="news-datail">
-								我们的生活没有假期，没有四季，只有两季！不努力就是淡季！旺季腰痛，淡季头痛！我们...
-							</div>
-						</div>
-						<div class="news-b">
-							<div class="pull-right">
-								<span class="new-sort">最新资讯</span>
-								<span class="news-time">2017-05-06</span>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!--页尾-->
-	<footer>
-		<div class="footer-top">
-			<div class="container">
-				<div class="row">
-					<div class="col-xs-6 col-sm-6 col-md-3">
-						<div class="pull-left">
-							<img src="images/footer1.png" alt="" />
-						</div>
-						<div class="pull-right">
-							<h3>碧果液肥</h3>
-							<h4>高端型技能液肥</h4>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-6 col-md-3">
-						<div class="pull-left">
-							<img src="images/footer2.png" alt="" />
-						</div>
-						<div class="pull-right">
-							<h3>我们的目标</h3>
-							<h4>争做全领先品牌</h4>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-6 col-md-3">
-						<div class="pull-left">
-							<img src="images/footer3.png" alt="" />
-						</div>
-						<div class="pull-right">
-							<h3>质量保证</h3>
-							<h4>通过国家HDO质量认证</h4>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-6 col-md-3">
-						<div class="pull-left">
-							<img src="images/footer4.png" alt="" />
-						</div>
-						<div class="pull-right">
-							<h3>售后服务</h3>
-							<h4>让您更放心</h4>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="footer-b">
-			<div class="container">
-				<div class="pull-left footer-about">
-					<h2>BIGUO碧果液肥</h2>
-					<p>英国碧绿源作物营养保护有限公司是、研发、生产、销售为一体的国际集团。跟法国瑞士有机农业研究是长期的战略合作伙伴。 公司前期是英国有机农业研究所，成立于1872年。1955年成立碧绿源作物营养保护有限公司，一直致力于有机生态农业的发展</p>
-				</div>
-				<div class="pull-left footer-product">
-					<div class="row">
-						<div class="col-sm-6 col-md-4">
-							<div class="thumbnail">
-								<img src="images/caomei.jpg"/>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-4">
-							<div class="thumbnail">
-								<img src="images/caomei2.jpg"/>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-4">
-							<div class="thumbnail">
-								<img src="images/caomei3.jpg"/>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-4">
-							<div class="thumbnail">
-								<img src="images/caomei4.jpg"/>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-4">
-							<div class="thumbnail">
-								<img src="images/caomei.jpg"/>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-4">
-							<div class="thumbnail">
-								<img src="images/caomei2.jpg"/>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="pull-left contact">
-					<ul>
-						<li>
-							<img src="icon/phone.png"/>
-							<span>0371-60908918</span>
-						</li>
-						<li>
-							<img src="icon/email.png"/>
-							<span>www.ygbly.com</span>
-						</li>
-						<li>
-							<img src="icon/fax.png"/>
-							<span>0371-60908918</span>
-						</li>
-						<li>
-							<img src="icon/adress.png"/>
-							<span>郑东新区商务内环十号楼东方国际702室</span>
-						</li>
-					</ul>
-				</div>
-				<div class="pull-right footer-weixin">
-					<img src="images/weixin.png"/>
-					<p>关注微信公众号，<br />碧果液肥给您惊喜！</p>
-				</div>
-			</div>
-		</div>
-		<div class="footer-c">
-			<div class="container">
-				<div class="pull-left">
-					<span><a href="">www.ygbly.com</a></span>
-				</div>
-				<div class="pull-right">
-					<ul>
-						<li><a href="index.html">首页</a></li>
-						<li><a href="about.html">关于我们</a></li>
-						<li><a href="product.html">产品中心</a></li>
-						<li><a href="news.html">新闻资讯</a></li>
-						<li><a href="contact.html">联系我们</a></li>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</footer>
-	<!--右侧聊天-->
-	<div class="right-box">
-		<div class="button searchStyle_2">
-			<img src="images/member-1-white.png"/>
-			在线客服
-			<img src="images/links-6-white-rev.png"/>
-		</div>
-		<div class="online-service searchStyle_2">
-			<i class="glyphicon glyphicon-remove"></i>
-			<div class="ol-list">
-				<a href=""><img src="images/button_121.gif"/>客服QQ</a>
-			</div>
-			<div class="ol-list">
-				<a>热线:0756-3838XXX</a>
-			</div>
-			<div class="ol-list">
-				<a>E-mail:oko@mail.com</a>
-			</div>
-			<div class="ol-list">
-				<a>传真:0756-3838XXX</a>
-			</div>
+{/volist}
 		</div>
 	</div>
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-<script src="js/jquery.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/bootstrap.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/SuperSlide.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/TouchSlide.1.1.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/style.js" type="text/javascript" charset="utf-8"></script>
-<script type="text/javascript">
-	/*产品选项卡*/
-	jQuery(".product-con").slide({trigger:"click"});
-	/*碧果展示轮播*/
-	TouchSlide({
-		slideCell: "#bgzs",
-		titCell: ".hd ul", //开启自动分页 autoPage:true ，此时设置 titCell 为导航元素包裹层
-		mainCell: ".bd ul",
-		effect: "leftLoop",
-		autoPage: true, //自动分页
-		autoPlay: true //自动播放
-	});
-</script>
-</body>
-</html>
+	{/block}

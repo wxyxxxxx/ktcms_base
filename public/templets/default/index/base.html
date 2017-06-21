@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>{block name="title"}{$sys.title}{/block}</title>
+<meta name="keywords" content='{block name="keywords"}{$sys.keywords}{/block}'>
+<meta name="description" content='{block name="description"}{$sys.desc}{/block}'>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="/templets/default/index/css/bootstrap.css"/>
+<link rel="stylesheet" type="text/css" href="/templets/default/index/css/style.css"/>
+<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_a4xr4qczpyvqjjor.css"/>
+{/block}
+{block name="diy_css"}{/block}
+</head>
+<body>
+	<!--头部-->
+{block name="nav"}
+
+
+<!-- {empty name="$Request.get.nid"}
+{assign name="nid" value='0'}
+{else/}
+{assign name="nid" value='$Request.get.nid'}
+{/empty} -->
+
+	<div class="top hidden-xs">
+		<div class="container">
+			<div class="pull-right">
+				<div class="email">电子邮箱：<i>{$sys.email}</i></div>
+				<div class="phone">客服热线：<i>{$sys.tel}</i></div>
+			</div>
+		</div>
+	</div>
+	<!--导航-->
+	<div class="container">
+		<div class="navbar" role="navigation">
+			<div class="logo  pull-left">
+				<a href="{:url()}"><img src="{$sys.logo}"/></a>
+				<!-- <span>高端有机功能型液肥</span> -->
+			</div>
+			<div class="navbar-header">
+				<div class="nav-phone">
+				<ul>
+				{volist name="nav_list" id="vo"}
+					<li {eq name="nav.id" value="$vo['id']"}class="on"{/eq}><a href="{empty name='vo.link'}{:url('index/index',['id'=>$vo['id']])}{else/}{$vo.link}{/empty}">{$vo.name}</a></li>
+				{/volist}
+				
+				</ul>
+				</div>
+				<button class="navbar-toggle">
+				<span class="icon-bar bg-info"></span>
+				<span class="icon-bar bg-info"></span>
+				</button>
+			</div>
+			<ul class="nav navbar-nav hidden-xs">
+				{volist name="nav_list" id="vo"}
+					<li {eq name="nav.id" value="$vo['id']"}class="on"{/eq}><a href="{empty name='vo.link'}{:url('index/index',['id'=>$vo['id']])}{else/}{$vo.link}{/empty}">{$vo.name}</a></li>
+				{/volist}
+			</ul>
+			<form class="searchStyle_2">
+				<input class="searchStyle_2" type="text" placeholder="请输入关键字">
+				<button type="submit"><i class="iconfont icon-fangdajing"></i></button>
+			</form>
+		</div>
+	</div>
+{/block}
+	<!--banner-->
+{block name="main"}内容{/block}
+	<!--页尾-->
+{block name="footer"}
+<footer>
+	<div class="footer-top">
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-6 col-sm-6 col-md-3">
+					<div class="pull-left">
+						<img src="{$path}images/footer1.png" alt="" />
+					</div>
+					<div class="pull-right">
+						<h3>碧果液肥</h3>
+						<h4>高端型技能液肥</h4>
+					</div>
+				</div>
+				<div class="col-xs-6 col-sm-6 col-md-3">
+					<div class="pull-left">
+						<img src="{$path}images/footer2.png" alt="" />
+					</div>
+					<div class="pull-right">
+						<h3>我们的目标</h3>
+						<h4>争做全领先品牌</h4>
+					</div>
+				</div>
+				<div class="col-xs-6 col-sm-6 col-md-3">
+					<div class="pull-left">
+						<img src="{$path}images/footer3.png" alt="" />
+					</div>
+					<div class="pull-right">
+						<h3>质量保证</h3>
+						<h4>通过国家HDO质量认证</h4>
+					</div>
+				</div>
+				<div class="col-xs-6 col-sm-6 col-md-3">
+					<div class="pull-left">
+						<img src="{$path}images/footer4.png" alt="" />
+					</div>
+					<div class="pull-right">
+						<h3>售后服务</h3>
+						<h4>让您更放心</h4>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="footer-b">
+		<div class="container">
+			<div class="pull-left footer-about">
+				<h2>{$sys.title}</h2>
+				<p>{$sys.field1}</p>
+			</div>
+			<div class="pull-left footer-product">
+				<div class="row">
+
+				{volist name=":get_imgs(5)" id="vo"}
+					<div class="col-sm-6 col-md-4">
+						<div class="thumbnail">
+							<img src="{$vo.img_url}"/>
+						</div>
+					</div>
+				{/volist}
+				</div>
+			</div>
+			<div class="pull-left contact">
+				<ul>
+					<li>
+						<img src="{$path}icon/phone.png"/>
+						<span>{$sys.tel}</span>
+					</li>
+					<li>
+						<img src="{$path}icon/email.png"/>
+						<span>www.ygbly.com</span>
+					</li>
+					<li>
+						<img src="{$path}icon/fax.png"/>
+						<span>{$sys.fax}</span>
+					</li>
+					<li>
+						<img src="{$path}icon/adress.png"/>
+						<span>{$sys.address}</span>
+					</li>
+				</ul>
+			</div>
+			<div class="pull-right footer-weixin">
+				<img src="{$sys.wx_img}"/>
+				<p>关注微信公众号，<br />碧果液肥给您惊喜！</p>
+			</div>
+		</div>
+	</div>
+	<div class="footer-c">
+		<div class="container">
+			<div class="pull-left">
+				<span><a href="">{$sys.domain}</a></span>
+			</div>
+			<div class="pull-right">
+				<ul>
+				
+					{volist name="nav_list" id="vo"}
+						<li ><a href="{empty name='vo.link'}{:url('index/index',['id'=>$vo['id']])}{else/}{$vo.link}{/empty}">{$vo.name}</a></li>
+					{/volist}
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+<!--右侧聊天-->
+<div class="right-box">
+	<div class="button searchStyle_2">
+		<img src="{$path}images/member-1-white.png"/>
+		在线客服
+		<img src="{$path}images/links-6-white-rev.png"/>
+	</div>
+	<div class="online-service searchStyle_2">
+		<i class="glyphicon glyphicon-remove"></i>
+		<div class="ol-list">
+			<a href=""><img src="{$path}images/button_121.gif"/>客服QQ</a>
+		</div>
+		<div class="ol-list">
+			<a>热线:{$sys.tel}</a>
+		</div>
+		<div class="ol-list">
+			<a>E-mail:{$sys.email}</a>
+		</div>
+		<div class="ol-list">
+			<a>传真:{$sys.fax}</a>
+		</div>
+	</div>
+</div>
+{/block}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+{block name="js"}
+	<script src="/templets/default/index/js/jquery.js" type="text/javascript" charset="utf-8"></script>
+	<script src="/templets/default/index/js/bootstrap.js" type="text/javascript" charset="utf-8"></script>
+	<script src="/templets/default/index/js/SuperSlide.js" type="text/javascript" charset="utf-8"></script>
+	<script src="/templets/default/index/js/TouchSlide.1.1.js" type="text/javascript" charset="utf-8"></script>
+	<script src="/templets/default/index/js/style.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		/*产品选项卡*/
+		jQuery(".product-con").slide({trigger:"click"});
+		/*碧果展示轮播*/
+		TouchSlide({
+			slideCell: "#bgzs",
+			titCell: ".hd ul", //开启自动分页 autoPage:true ，此时设置 titCell 为导航元素包裹层
+			mainCell: ".bd ul",
+			effect: "leftLoop",
+			autoPage: true, //自动分页
+			autoPlay: true //自动播放
+		});
+	</script>
+{/block}
+{block name="diy_js"}
+{/block}
+</body>
+</html>

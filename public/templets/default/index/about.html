@@ -1,80 +1,31 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>关于我们</title>
-<meta name="keywords" content="">
-<meta name="description" content="">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
-<link rel="stylesheet" type="text/css" href="css/style.css"/>
-<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_a4xr4qczpyvqjjor.css"/>
-</head>
-<body>
-	<!--头部-->
-	<div class="top hidden-xs">
-		<div class="container">
-			<div class="pull-right">
-				<div class="email">电子邮箱：<i>www.ygbly.com</i></div>
-				<div class="phone">客服热线：<i>0371-60908918</i></div>
-			</div>
-		</div>
-	</div>
-	<!--导航-->
-	<div class="container">
-		<div class="navbar" role="navigation">
-			<div class="logo  pull-left">
-				<a href="index.html"><img src="images/logo.png"/></a>
-				<span>高端有机功能型液肥</span>
-			</div>
-			<div class="navbar-header">
-				<div class="nav-phone">
-				<ul>
-					<li class="on"><a href="index.html">首页</a></li>
-					<li><a href="about.html">关于我们</a></li>
-					<li><a href="product.html">产品中心</a></li>
-					<li><a href="news.html">新闻资讯</a></li>
-					<li><a href="contact.html">联系我们</a></li>
-				</ul>
-				</div>
-				<button class="navbar-toggle">
-				<span class="icon-bar bg-info"></span>
-				<span class="icon-bar bg-info"></span>
-				</button>
-			</div>
-			<ul class="nav navbar-nav hidden-xs">
-				<li class="on"><a href="index.html">首页</a></li>
-				<li><a href="about.html">关于我们</a></li>
-				<li><a href="product.html">产品中心</a></li>
-				<li><a href="news.html">新闻资讯</a></li>
-				<li><a href="contact.html">联系我们</a></li>
-			</ul>
-			<form class="searchStyle_2">
-				<input class="searchStyle_2" type="text" placeholder="请输入关键字">
-				<button type="submit"><i class="iconfont icon-fangdajing"></i></button>
-			</form>
-		</div>
-	</div>
+{extend name="index/base" /}
+
+{block name="main"}
+
 	<!--内页banner-->
 	<div class="ny-banner">
-		<img src="images/ny-banner.jpg"/>
+		<img src="{$nav['img']}"/>
 		<div class="view">
-			<h2>关于我们</h2>
-			<h3><i>about Us</i></h3>
+			<h2>{$nav['name']}</h2>
+			<h3><i>{$nav['sub_name']}</i></h3>
 		</div>
 	</div>
 	<div class="container about-box">
 		<div class="ny-nav">
-			<ul>
-				<li><a href="">首页</a></li>
-				<span>&gt;</span>
-				<li><a href="">关于我们</a></li>
-			</ul>
+		<ul>
+			<li><a href="{:url('index/index')}">首页</a></li>
+			
+			{volist name="up_nav" id="vo"}
+			<span>&gt;</span>
+			<li><a href="{:url('index/index',['id'=>$vo['id']])}">{$vo.name}</a></li>
+			{/volist}
+			
+		</ul>
 		</div>
 		<div class="about-con">
 			<div class="pull-left">
 				<ul>
-					<li class="active">
+<!-- 					<li class="active">
 						<a class="searchStyle_2" href="about.html">公司简介<i class="glyphicon glyphicon-menu-right searchStyle_2"></i></a>
 					</li>
 					<li>
@@ -82,196 +33,36 @@
 					</li>
 					<li>
 						<a class="searchStyle_2" href="about3.html">公司文化<i class="glyphicon glyphicon-menu-right searchStyle_2"></i></a>
-					</li>
+					</li> -->
+					{assign name="tid" value="0"}
+						{volist name=":get_sub_nav($nav['id'])" id="vo" key="k"}
+							{eq name="$Request.get.id" value="$nav['id']"}
+								{eq name="k" value='1'}
+								
+									{assign name="tid" value="$vo['id']"}
+								{/eq}
+								
+								
+
+							{else/}
+								{assign name="tid" value="$Request.get.id"}
+							{/eq}
+							<li {eq name="tid" value="$vo['id']"}class="active"{/eq}>
+								<a class="searchStyle_2" href="{:url('index/index',['id'=>$vo['id']])}">{$vo.name}<i class="glyphicon glyphicon-menu-right searchStyle_2"></i></a>
+							</li>
+						
+						{/volist}
 				</ul>
 			</div>
 			<div class="pull-right">
 				<div class="about-text profile">
-					<p>公司前期是英国有机农业研究所，成立于1872年。1955年成立碧绿源作物营养保护有限公司，一直致力于有机生态农业的发展，公司旗下有戴维斯，沃克院士领导的博士，硕士研发团队二十多人在世界有机生态全营养功能液肥研究课题上权威领导团队。 公司始终致力于绿色有机生态农业的发展，秉承科学农业方针，愿与业界各方致力于发展有机农业，科学农业的团体人士精诚合作，共同发展。 碧果作为农业高端有机型液肥，采用深海鱼油等多类珍贵物质，补充不同作物各个时期的全面营养需求，全面改善作物生长状态及品质，显著提高产量</p>
+					{:get_nav_detail($tid)['content']}
 				</div>
-				<div class="profile-img">
+				<!-- <div class="profile-img">
 					<img src="images/gongsi.jpg"/>
-				</div>
+				</div> -->
 			</div>
 		</div>
 	</div>
-	<!--页尾-->
-	<footer>
-		<div class="footer-top">
-			<div class="container">
-				<div class="row">
-					<div class="col-xs-6 col-sm-6 col-md-3">
-						<div class="pull-left">
-							<img src="images/footer1.png" alt="" />
-						</div>
-						<div class="pull-right">
-							<h3>碧果液肥</h3>
-							<h4>高端型技能液肥</h4>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-6 col-md-3">
-						<div class="pull-left">
-							<img src="images/footer2.png" alt="" />
-						</div>
-						<div class="pull-right">
-							<h3>我们的目标</h3>
-							<h4>争做全领先品牌</h4>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-6 col-md-3">
-						<div class="pull-left">
-							<img src="images/footer3.png" alt="" />
-						</div>
-						<div class="pull-right">
-							<h3>质量保证</h3>
-							<h4>通过国家HDO质量认证</h4>
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-6 col-md-3">
-						<div class="pull-left">
-							<img src="images/footer4.png" alt="" />
-						</div>
-						<div class="pull-right">
-							<h3>售后服务</h3>
-							<h4>让您更放心</h4>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="footer-b">
-			<div class="container">
-				<div class="pull-left footer-about">
-					<h2>BIGUO碧果液肥</h2>
-					<p>英国碧绿源作物营养保护有限公司是、研发、生产、销售为一体的国际集团。跟法国瑞士有机农业研究是长期的战略合作伙伴。 公司前期是英国有机农业研究所，成立于1872年。1955年成立碧绿源作物营养保护有限公司，一直致力于有机生态农业的发展</p>
-				</div>
-				<div class="pull-left footer-product">
-					<div class="row">
-						<div class="col-sm-6 col-md-4">
-							<div class="thumbnail">
-								<img src="images/caomei.jpg"/>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-4">
-							<div class="thumbnail">
-								<img src="images/caomei2.jpg"/>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-4">
-							<div class="thumbnail">
-								<img src="images/caomei3.jpg"/>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-4">
-							<div class="thumbnail">
-								<img src="images/caomei4.jpg"/>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-4">
-							<div class="thumbnail">
-								<img src="images/caomei.jpg"/>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-4">
-							<div class="thumbnail">
-								<img src="images/caomei2.jpg"/>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="pull-left contact">
-					<ul>
-						<li>
-							<img src="icon/phone.png"/>
-							<span>0371-60908918</span>
-						</li>
-						<li>
-							<img src="icon/email.png"/>
-							<span>www.ygbly.com</span>
-						</li>
-						<li>
-							<img src="icon/fax.png"/>
-							<span>0371-60908918</span>
-						</li>
-						<li>
-							<img src="icon/adress.png"/>
-							<span>郑东新区商务内环十号楼东方国际702室</span>
-						</li>
-					</ul>
-				</div>
-				<div class="pull-right footer-weixin">
-					<img src="images/weixin.png"/>
-					<p>关注微信公众号，<br />碧果液肥给您惊喜！</p>
-				</div>
-			</div>
-		</div>
-		<div class="footer-c">
-			<div class="container">
-				<div class="pull-left">
-					<span><a href="">www.ygbly.com</a></span>
-				</div>
-				<div class="pull-right">
-					<ul>
-						<li><a href="index.html">首页</a></li>
-						<li><a href="about.html">关于我们</a></li>
-						<li><a href="product.html">产品中心</a></li>
-						<li><a href="news.html">新闻资讯</a></li>
-						<li><a href="contact.html">联系我们</a></li>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</footer>
-	<!--右侧聊天-->
-	<div class="right-box">
-		<div class="button searchStyle_2">
-			<img src="images/member-1-white.png"/>
-			在线客服
-			<img src="images/links-6-white-rev.png"/>
-		</div>
-		<div class="online-service searchStyle_2">
-			<i class="glyphicon glyphicon-remove"></i>
-			<div class="ol-list">
-				<a href=""><img src="images/button_121.gif"/>客服QQ</a>
-			</div>
-			<div class="ol-list">
-				<a>热线:0756-3838XXX</a>
-			</div>
-			<div class="ol-list">
-				<a>E-mail:oko@mail.com</a>
-			</div>
-			<div class="ol-list">
-				<a>传真:0756-3838XXX</a>
-			</div>
-		</div>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
-<script src="js/jquery.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/bootstrap.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/style.js" type="text/javascript" charset="utf-8"></script>
-<script type="text/javascript">
-	/*关于我们右侧导航*/
-$(window).scroll(function(event) {
-	var winPos = $(window).scrollTop();
-	var nboFt = $('.about-con').offset().top;
-	var soft = $('.about-con').offset().left;
-	if (winPos >= nboFt) {
-		$(".about-con .pull-left").addClass("pull-left-fixed");
-		$(".about-con .pull-left").css({'left':soft});
-	} else{
-		$(".about-con .pull-left").removeClass("pull-left-fixed"); 
-	}
-});
-</script>
-</body>
-</html>
+	{/block}

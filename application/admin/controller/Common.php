@@ -8,6 +8,7 @@ class common extends Controller
 {   
     public $admin;
     public $admin_id;
+    public $sys_config;
 
     public function _initialize()
      {
@@ -16,6 +17,10 @@ class common extends Controller
         $this->assign("host_url","http://".$_SERVER['SERVER_NAME']);
         $action       = Request::instance()->action();
         $this->check_admin_login();
+        $this->sys_config=get_sys_config();
+        $this->assign(['sys_config'=>$this->sys_config]);
+
+        get_nav();
 // get_tables();exit;
         // $arr=explode(",",'');
         // dump(json_decode(json_decode(json_encode([['id'=>1,'name'=>'内部'],['id'=>1,'name'=>'内部']])))) ;exit;
@@ -193,7 +198,7 @@ class common extends Controller
       }
       $search_fields=rtrim($search_fields,',');
       if ($model['table']!='') {
-          $arr=db($model['table'])->where($where)->field($search_fields)->paginate(20,false,['query'=>$input]);
+          $arr=db($model['table'])->where($where)->field($search_fields)->paginate($this->sys_config['page_size'],false,['query'=>$input]);
       }else{
           $arr=[];
       }
@@ -204,6 +209,7 @@ class common extends Controller
       $this->assign("fields",$fields);
       $this->assign("model_id",$model_id);
       $this->assign("menu_id",$menu_id);
+      $this->assign("menu",$menu);
       $this->assign("operation",$operation);
       return $this->fetch();
     }
