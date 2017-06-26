@@ -20,7 +20,9 @@ class admin extends Common
          
      }
 
-
+     // public function nav_list(){
+        
+     // }
      public function index(){
         return $this->fetch();
      }

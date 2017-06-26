@@ -8,10 +8,13 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-
+// phpinfo();exit;
 use think\Route;
 // 注册路由到index模块的News控制器的read操作
 Route::rule('kt','admin/common/index');
 // Route::rule([
 //     'ktwl/:nid'  =>  'index/index/index',
 // ]);
+// 
+// Route::alias('index','index/index');
+// Route::rule('index/:id','index/index/index');

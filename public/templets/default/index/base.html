@@ -2,9 +2,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>{block name="title"}{$sys.title}{/block}</title>
-<meta name="keywords" content='{block name="keywords"}{$sys.keywords}{/block}'>
-<meta name="description" content='{block name="description"}{$sys.desc}{/block}'>
+<title>{block name="title"}{$sys.title}-{$nav.name}{/block}</title>
+<meta name="keywords" content='{block name="keywords"}{$keywords}{/block}'>
+<meta name="description" content='{block name="description"}{$description}{/block}'>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 {block name="css"}
 <link rel="stylesheet" type="text/css" href="/templets/default/index/css/bootstrap.css"/>
@@ -12,6 +12,7 @@
 <link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_a4xr4qczpyvqjjor.css"/>
 {/block}
 {block name="diy_css"}{/block}
+{include file="index/wxshare"}
 </head>
 <body>
 	<!--头部-->
@@ -36,14 +37,15 @@
 	<div class="container">
 		<div class="navbar" role="navigation">
 			<div class="logo  pull-left">
-				<a href="{:url()}"><img src="{$sys.logo}"/></a>
+				<a href="{:url('index/index/index')}"><img src="{$sys.logo}"/></a>
 				<!-- <span>高端有机功能型液肥</span> -->
 			</div>
 			<div class="navbar-header">
 				<div class="nav-phone">
 				<ul>
+				
 				{volist name="nav_list" id="vo"}
-					<li {eq name="nav.id" value="$vo['id']"}class="on"{/eq}><a href="{empty name='vo.link'}{:url('index/index',['id'=>$vo['id']])}{else/}{$vo.link}{/empty}">{$vo.name}</a></li>
+					<li {eq name="nav.id" value="$vo['id']"}class="on"{/eq}><a href="{empty name='vo.link'}{:url('index/index/index',['id'=>$vo['id']])}{else/}{$vo.link}{/empty}">{$vo.name}</a></li>
 				{/volist}
 				
 				</ul>
@@ -55,7 +57,7 @@
 			</div>
 			<ul class="nav navbar-nav hidden-xs">
 				{volist name="nav_list" id="vo"}
-					<li {eq name="nav.id" value="$vo['id']"}class="on"{/eq}><a href="{empty name='vo.link'}{:url('index/index',['id'=>$vo['id']])}{else/}{$vo.link}{/empty}">{$vo.name}</a></li>
+					<li {eq name="nav.id" value="$vo['id']"}class="on"{/eq}><a href="{empty name='vo.link'}{:url('index/index/index',['id'=>$vo['id']])}{else/}{$vo.link}{/empty}">{$vo.name}</a></li>
 				{/volist}
 			</ul>
 			<form class="searchStyle_2">
@@ -165,7 +167,7 @@
 				<ul>
 				
 					{volist name="nav_list" id="vo"}
-						<li ><a href="{empty name='vo.link'}{:url('index/index',['id'=>$vo['id']])}{else/}{$vo.link}{/empty}">{$vo.name}</a></li>
+						<li ><a href="{empty name='vo.link'}{:url('index/index/index',['id'=>$vo['id']])}{else/}{$vo.link}{/empty}">{$vo.name}</a></li>
 					{/volist}
 				</ul>
 			</div>

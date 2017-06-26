@@ -91,7 +91,7 @@ class common extends Controller
         $menu=get_menu($menu_id);
         $model_id=$menu['model_id'];
         $model=get_model($model_id);
-        $fields=get_fields($model_id,['is_display'=>1]);   
+        $fields=get_fields_search($model_id,['is_display'=>1]);   
         $where="1=1";
         $joins=[];
         $search_fields='';
@@ -175,7 +175,7 @@ class common extends Controller
       $menu=get_menu($menu_id);
       $model_id=$menu['model_id'];
       $model=get_model($model_id);
-      $fields=get_fields($model_id,['is_display'=>1]);
+      $fields=get_fields_search($model_id,['is_display'=>1]);
 
       $admin=session("admin");
       $auth_arr=json_decode($admin['auth_ids'],true);
@@ -196,9 +196,24 @@ class common extends Controller
             $where.=" and ".$e['field']."='".$input[$e['field']]."'";
           }
       }
+      unset($e);
       $search_fields=rtrim($search_fields,',');
       if ($model['table']!='') {
-          $arr=db($model['table'])->where($where)->field($search_fields)->paginate($this->sys_config['page_size'],false,['query'=>$input]);
+        switch ($menu_id) {
+          case '35':
+            $arr=Db::name($model['table'])->field("*")->select();
+
+            $arr=getTree($arr);
+             unset($GLOBALS['tree']);
+            // dump($arr);exit;
+            // dump(getTree($arr));exit;
+            break;
+          
+          default:
+            $arr=Db::name($model['table'])->where($where)->field($search_fields)->paginate($this->sys_config['page_size'],false,['query'=>$input]);
+            break;
+        }
+          
       }else{
           $arr=[];
       }
@@ -227,9 +242,10 @@ class common extends Controller
         check_auth(2,$menu_id);
       }
       $model=get_model($model_id);
-   
-      $fields=get_fields($model_id,['is_edit'=>1]);
+      $fields=get_fields($model_id,['a.is_edit'=>1]);
+      // dump($fields);exit;
       $arr=db($model['table'])->where("id",$id)->find();
+
     if ($id>0) {
       # code...
     }else{
@@ -251,6 +267,15 @@ class common extends Controller
 
       }
     }
+
+    // $tab=db("sys_field_tab")->where("mid",$model_id)->order("sort asc")->select();
+    // $new_arr=[];
+    // foreach ($arr as $key => $e) {
+    //   if ($e['tab']) {
+    //     # code...
+    //   }
+    //   $new_arr[$e['tab']][]=$e;
+    // }
     
       $this->assign([
           "list"=>$arr,
@@ -379,6 +404,28 @@ class common extends Controller
 
     }
 
+    public function change_sort(){
+      $id=input("get.id",0);
+      $menu_id=input("get.menu_id",'');
+      $menu=get_menu($menu_id);
+      $model_id=$menu['model_id'];
+      $model=get_model($model_id);
+
+
+
+      $data['sort']=input("post.sort",0);
+
+
+
+
+      $res=db($model['table'])->where("id",$id)->update($data);
+      if ($res>0) {
+        ejson(1,'操作成功');
+      }else{
+         ejson(-1,'操作失败');
+      }
+
+    }
 
     public function role_auth(){
       $id=input("get.id",0);
@@ -465,7 +512,7 @@ class common extends Controller
     public function login_out(){
       session("admin_id",null);
       session_destroy();
-      $this->redirect("/admin/common/index");
+      $this->redirect("/kt");
     }
 
 

@@ -14,6 +14,10 @@
             <h5>表单构建器 v1.0.0</h5>
         </div>
         <div class="alert alert-success">数据源格式为 value:name;value:name;value:name 或者 填写 data.php 里面的函数</div>
+
+
+        <!-- <input type="" name="" id="tab_val" value="{volist name="tab" id="vo"}{$vo.name};{/volist}"/><button id="w_tab">同步</button> -->
+
         <div class="ibox-content" >
 
             <table class="table table-bordered w_edit" style="font-size: 12px !important;">
@@ -33,6 +37,7 @@
                         <th>编辑</th>
                         <th>搜索</th>
                         <th>不为空</th>
+                        <th>位置</th>
                         
                         
                             
@@ -77,6 +82,16 @@
                     <td><input type="checkbox" name="" checked value="1"></td>
                     <td><input type="checkbox" name="" checked value="1"></td>
                     <td>
+                    <select class="ww_tab">
+                    {volist name="tab" id="ss"}
+                    <option value="{$ss.id}" >{$ss.name}</option>
+                    {/volist}
+                      
+                      </select>
+                    
+                    
+                    </td>
+                    <td>
                     <div class="btn-group hidden-xs" id="exampleTableEventsToolbar" role="group"> 
                     <a cz="1" aid="0" onclick="javascript:w_save(this)" class="btn btn-primary btn-sm w_bc">保存</a>
                     <a cz="1" aid="0" onclick="javascript:w_del(this)" class="btn btn-danger btn-sm w_bc">删除</a>
@@ -119,7 +134,18 @@
                         <td><input type="checkbox" name="" {eq name="vo.is_edit" value="1"} checked{/eq} value="1"></td>
                         <td><input type="checkbox" name="" {eq name="vo.is_search" value="1"} checked{/eq} value="1"></td>
                          <td><input type="checkbox" name="" {eq name="vo.is_allow_null" value="1"} checked{/eq} value="1"></td>
+                         <td>
+                         <select class="ww_tab">
+                         
+                             {volist name="tab" id="ss"}
+                             <option value="{$ss.id}" {eq name="vo.tab" value="$ss['id']"}selected{/eq}>{$ss.name}</option>
+                             {/volist}
+                        </select>
+                         
+                         
+                         </td>
                         <td>
+
                        
                         <div class="btn-group hidden-xs" id="exampleTableEventsToolbar" role="group"> 
                         <a cz="1" aid="{$vo.id}" onclick="javascript:w_save(this)" class="btn btn-primary btn-sm w_bc">保存</a>
@@ -150,7 +176,26 @@
 <script src="__PUBLIC__/static/admin/js/plugins/toastr/toastr.min.js"></script>
  <link href="__PUBLIC__/static/admin/css/plugins/toastr/toastr.min.css" rel="stylesheet">
 <script type="text/javascript">
+$(function(){
+    $("#w_tab").click(function(){
+        var str=$("#tab_val").val();
 
+        str=str.split(";");
+        str.reverse();
+        console.log(str);
+        var new_options='';
+        for (var i = str.length - 1; i >= 0; i--) {
+            new_options+="<option value='"+str[i]+"'>"+str[i]+"</option>";
+        }
+        $(".ww_tab").each(function(){
+            var p=$(this);
+            var choose=p.val();
+
+            p.html(new_options);
+            p.val(choose);
+        })
+    })
+})
   
 </script>
 
@@ -173,6 +218,7 @@ function w_save(e){
     var data_from=tdarr[6].firstChild.value;
     var rule=tdarr[7].firstChild.value;
     var sort=tdarr[8].firstChild.value;
+    var tab=tdarr[13].getElementsByTagName('select')[0].value;
     if (tdarr[9].firstChild.checked) {
         var is_display=1;
     }else{
@@ -195,7 +241,7 @@ function w_save(e){
     }
 
     console.log(is_display);
-    $.post("{:url('admin/develop/save_model_fields')}?id="+aid,{field:field,name:name,edit_type:edit_type,default:wdefault,remark:remark,rule:rule,sort:sort,model_id:model_id,data_from:data_from,width:width,is_display:is_display,is_edit:is_edit,is_search:is_search,is_allow_null:is_allow_null},function(res){
+    $.post("{:url('admin/develop/save_model_fields')}?id="+aid,{field:field,name:name,edit_type:edit_type,default:wdefault,remark:remark,rule:rule,sort:sort,model_id:model_id,data_from:data_from,width:width,is_display:is_display,is_edit:is_edit,is_search:is_search,is_allow_null:is_allow_null,tab:tab},function(res){
         res=eval("("+res+")");
         if (res.code==1) {
             e.setAttribute("aid",res.data.id);

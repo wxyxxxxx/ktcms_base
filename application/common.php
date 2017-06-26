@@ -10,6 +10,7 @@
 // +----------------------------------------------------------------------
 
 // 应用公共文件
+use weixin\WxApi;
 require_once("data.php");
  function ejson($code,$msg,$data='')
 {
@@ -129,7 +130,29 @@ function get_model($model_id=0){
 }
 
 function get_fields($model_id=0,$where){
-	return db("sys_fields")->where("model_id",$model_id)->where($where)->order("sort asc")->select();
+	$arr=db("sys_fields")->alias("a")->join("kt_sys_field_tab b","a.tab=b.id",'left')->where("a.model_id",$model_id)->where($where)->field("a.*,b.name as tab_name,b.sort as tab_sort")->order("a.sort asc")->select();
+	$new_arr=[];
+	foreach ($arr as $key => $e) {
+		if (!isset($new_arr[$e['tab']])) {
+			if ($e['tab']==0) {
+				$e['tab_name']='基础';
+				$e['tab_sort']=0;
+				$e['tab_id']=0;
+			}
+			$new_arr[$e['tab']]['name']=$e['tab_name'];
+			$new_arr[$e['tab']]['sort']=$e['tab_sort'];
+			$new_arr[$e['tab']]['tab_id']=$e['tab'];
+		}
+		$new_arr[$e['tab']]['child'][]=$e;
+	}
+
+	$new_arr=arr_sort($new_arr,'sort');
+	// dump($new_arr);exit;
+	return $new_arr;
+
+}
+function get_fields_search($model_id=0,$where){
+	return db("sys_fields")->alias("a")->where("model_id",$model_id)->where($where)->order("sort asc")->select();
 }
 function get_sys_config(){
 	return db("sys_config")->where("status",1)->find();
@@ -192,6 +215,28 @@ function send_sms($type,$mobile="18501992404"){
 }
 
 
+//二维数组按照某个键值排序
+function arr_sort($arr,$field,$sort='SORT_ASC'){
+	$sort = array(
+	        'direction' => $sort, //排序顺序标志 SORT_DESC 降序；SORT_ASC 升序
+	        'field'     => $field,       //排序字段
+	);
+	$arrSort = array();
+	foreach($arr AS $uniqid => $row){
+	    foreach($row AS $key=>$value){
+	        $arrSort[$key][$uniqid] = $value;
+	    }
+	}
+	if($sort['direction']){
+		if (isset($arrSort[$sort['field']])) {
+			
+		}else{
+			$arrSort[$sort['field']]=[];
+		}
+	    array_multisort($arrSort[$sort['field']], constant($sort['direction']), $arr);
+	}
+	return $arr;
+}
 function getIP()  
 {  
 if (@$_SERVER["HTTP_X_FORWARDED_FOR"])  
@@ -210,3 +255,26 @@ else
 $ip = "Unknown";  
 return $ip;  
 } 
+function error_page(){
+	header("Location:http://{$_SERVER['SERVER_NAME']}/404.html");exit;
+}
+function get_url() {
+	$sys_protocal = isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == '443' ? 'https://' : 'http://';
+	$php_self = $_SERVER['PHP_SELF'] ? $_SERVER['PHP_SELF'] : $_SERVER['SCRIPT_NAME'];
+	$path_info = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '';
+	$relate_url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : $php_self . (isset($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : $path_info);
+	return $sys_protocal . (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '') . $relate_url;
+}
+function wx(){
+	// $wx = new WxApi();
+	$wx = new WxApi(config('sys_set')['wx_appid'],config('sys_set')['wx_appsecret']);
+
+	return $wx;
+}
+
+function wx_signPackage(){
+	$wx=wx();
+	$signPackage = $wx->wxJsapiPackage();
+	return $signPackage;
+}
+

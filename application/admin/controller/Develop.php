@@ -203,10 +203,13 @@ class develop extends Controller
           echo "请先选择模型";exit;
         }
         $arr=db("sys_fields")->where("model_id",$model_id)->order("sort asc")->select();
+        $tab=db("sys_field_tab")->where("mid",$model_id)->order("sort asc")->select();
+        // dump($tab);exit;
         $this->assign("list",$arr);
         $this->assign("tb","sys_fields");
         $this->assign("model_id",$model_id);
         $this->assign("model",$model);
+        $this->assign("tab",$tab);
         return $this->fetch();
     }
 

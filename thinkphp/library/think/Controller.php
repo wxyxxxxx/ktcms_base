@@ -209,4 +209,11 @@ class Controller
             return true;
         }
     }
+
+    // public function _empty($name)
+    // {
+    //     echo "{$name}不存在";exit;
+    //     //把所有城市的操作解析到city方法
+       
+    // }
 }

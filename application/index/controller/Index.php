@@ -5,22 +5,50 @@ use think\Cache;
 use think\Controller;
 use think\Db;
 use think\Request;
+use weixin\WxApi;
 
 class Index extends Controller
 {
 
-  
+    public $sys;
     public function _initialize()
     {
         header("Content-type:text/html;charset=utf-8");
         header('Access-Control-Allow-Origin:*');
+
+        $this->base_set();
+        $this->get_signPackage();//获取微信分享参数
+    }
+
+
+    public function base_set(){
         $sys=get_sys_set();
+        config('sys_set',$sys);
+        $this->sys=$sys;
         $this->assign('sys',$sys);
         $this->assign("host", "http://" . $_SERVER['SERVER_NAME']);
-  		$this->assign("path","/templets/default/index/");
-
+        $this->assign("path","/templets/default/index/");
         $this->assign('nav_list',nav());
- 
+        $this->assign("keywords",$sys['keywords']);
+        $this->assign("description",$sys['desc']);
+        $this->assign("share_icon",$sys['share_icon']);
+    }
+
+    /*分享配置参数*/
+    public function get_signPackage() {
+        if (!config("is_weixin")) {
+            return false;
+        }
+        $signPackage=wx_signPackage();
+
+       // require_once EXTEND_PATH . "weixin/WxApi.class.php";
+       // $wx = new WxApi($this->sys['wx_appid'],$this->sys['wx_appsecret']);
+       // $signPackage = $wx->wxJsapiPackage();
+
+
+       $this->assign('signPackage', $signPackage);
+
+       //$this->get_memcached();
     }
 
     public function index2(){
@@ -32,8 +60,10 @@ class Index extends Controller
         $Email='1048277366@qq.com';
         $Province='中国';
         $Tel='13253631415';
+        $key='52d';
         $Time=date("YmdHis");
-        $Md5Str=md5($sid.$Cataid.$Username.$Password.$Name.$Email.$Province.$Tel.$Time);
+        $Md5Str=md5($sid.$Cataid.$Username.$Password.$Time.$key);
+        // $Md5Str=md5($sid."$".$Cataid."$$$$$$".$Username."$".$Password."$".$Time."$".$key);
         $str=UrlEnCode($Md5Str.'$'.$sid.'$'.$Cataid.'$$$$$$$$'.$Username.'$'.$Password.'$'.$Name.'$'.$Email.'$'.$Province.'$'.$Tel.'$'.$Time);
         // $str=UrlEnCode('Md5Str='.$Md5Str.'&sid='.$sid.'&Cataid='.$Cataid.'&Username='.$Username.'&Password='.$Password.'&Name='.$Name.'&Email='.$Email.'&Province='.$Province.'&Tel='.$Tel.'&Time='.$Time);
 
@@ -44,9 +74,11 @@ class Index extends Controller
     	return $this->fetch('index');
     }
 
-    public function index(){
+    public function index($id=0){
 
-    	$id=input("get.id",0);
+
+        $id=input("get.id",0);
+    	// $id=input("id",0);
 
         $nid=$this->nav_info($id);
     	$arr=db("nav")->where("id",$nid)->where("status",1)->find();
@@ -55,9 +87,13 @@ class Index extends Controller
             $arr=db("nav")->where("status",1)->where("up_id",0)->order("sort asc")->find();
     		// $this->error("内容不存在");
     	}
-        // dump($arr);exit;
+        
         $this->assign('nav',$arr);
     	
+        $this->assign("title",$arr['name']);
+        $this->assign("keywords",$arr['keywords']);
+        $this->assign("description",$arr['description']);
+        $this->assign("share_icon",$arr['img']);
     	return $this->fetch($arr['templet']);
     }
 
@@ -74,6 +110,10 @@ class Index extends Controller
        
         $this->assign('nav',$arr);
         $this->assign('news',$news);
+        $this->assign("title",$news['title']);
+        $this->assign("keywords",$news['keywords']);
+        $this->assign("description",$news['description']);
+        $this->assign("share_icon",$news['thumb']);
         return $this->fetch($arr['templet_detail']);
     }
 

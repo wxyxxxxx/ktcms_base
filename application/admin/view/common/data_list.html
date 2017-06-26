@@ -21,7 +21,9 @@
     <a href="javascript:void(0);" opentype="1" _href="{:url('admin/common/edit_data')}?menu_id=3&id={$model_id}"  class="btn w_open btn-info btn-sm">模型设置</a>
      <a href="javascript:void(0);" opentype="1" _href="{:url('admin/common/edit_data')}?menu_id=2&id={menu_id}" menu_id="{$menu_id}" class="btn btn-success btn-sm w_open">菜单设置</a>
     <a href="{:url('admin/develop/table_desgin')}?table=kt_{$model.table}"  class="btn btn-info btn-sm">数据表设计</a>
-    <a href="{:url('admin/develop/model_fields')}?model_id={$model_id}"  class="btn btn-success btn-sm">字段设置</a>
+   
+    <a href="javascript:void(0);" opentype="1" _href="{:url('admin/common/data_list')}?menu_id=48&mid={$model_id}" menu_id="{$menu_id}" class="btn btn-success btn-sm w_open">TAB设置</a>
+    <a href="{:url('admin/develop/model_fields')}?model_id={$model_id}"  class="btn btn-info btn-sm">字段设置</a>
 
     <?php
     }
@@ -95,7 +97,12 @@
            <tr> 
              <th><input type="checkbox" name="" id="w_check"></th> 
             {volist name="fields" id="vo"}
+            
+            {eq name="vo.field" value="sort"}
+            <th style="width: 50px;">{$vo.name}</th> 
+            {else/}
             <th>{$vo.name}</th> 
+            {/eq}
             {/volist}
             <th>操作</th> 
            </tr>
@@ -141,7 +148,11 @@
                   {/case}
                  
                   {default /}
+                  {eq name="n.field" value="sort"}
+                  <input aid="{$vo.id}" class="w_sort" style="width: 50px;" type="number" value="{$vo[$n.field]}"/>
+                  {else/}
                   {$vo[$n.field]}
+                  {/eq}
               {/switch}
               </td>
             
@@ -169,7 +180,7 @@
           </tbody> 
          </table> 
 
-         <?php if(count($list)>0) {?>
+         <?php if(count($list)>0&&is_object($list)) {?>
         {$list->render()}
         <?php }?>
         </div> 
@@ -344,6 +355,21 @@
       });
     })
 
+    $(".w_sort").change(function(){
+      var p=$(this);
+      var id=p.attr("aid");
+      var sort=p.val();
+      $.post("{:url('admin/common/change_sort')}?menu_id={$menu_id}&id="+id,{sort:sort},function(res){
+          res=eval("("+res+")");
+          if (res.code==1) {
+             
+              // toastr.success(res.msg);
+          }else{
+              toastr.error(res.msg);return false;
+          }
+      })
+
+    })
 
     $("#w_sb").click(function(){
       var id=$(this).attr("aid");

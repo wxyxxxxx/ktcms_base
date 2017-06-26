@@ -338,6 +338,7 @@ class App
                 // 模块请求缓存检查
                 $request->cache($config['request_cache'], $config['request_cache_expire']);
             } else {
+                error_page();
                 throw new HttpException(404, 'module not exists:' . $module);
             }
         } else {
@@ -366,6 +367,7 @@ class App
 
         $instance = Loader::controller($controller, $config['url_controller_layer'], $config['controller_suffix'], $config['empty_controller']);
         if (is_null($instance)) {
+            error_page();
             throw new HttpException(404, 'controller not exists:' . Loader::parseName($controller, 1));
         }
         // 获取当前操作名
@@ -381,6 +383,7 @@ class App
             $vars = [$actionName];
         } else {
             // 操作不存在
+            error_page();
             throw new HttpException(404, 'method not exists:' . get_class($instance) . '->' . $action . '()');
         }
 

@@ -218,11 +218,14 @@ function upload_set($rule=''){
 
 function get_nav(){
 	$arr=db("nav")->order("sort asc")->select();
-	foreach ($arr as $key => &$e) {
-		$e['parent_id']=$e['up_id'];
-	}
-	unset($e);
-	$res=make_option_tree_for_select($arr);
+	// foreach ($arr as $key => &$e) {
+	// 	$e['parent_id']=$e['up_id'];
+	// }
+	// unset($e);
+	// $res=make_option_tree_for_select($arr);
+
+	$res=getTree($arr);
+	 unset($GLOBALS['tree']);
 	return $res;
 	// dump($res);exit;
 }
@@ -367,3 +370,18 @@ function make_option_tree_for_select22($arr, $depth=0)
     }
     return make_options1($arr, $depth);
 }
+function getTree($data,$pid=0,$step=0){
+	global $tree;
+	foreach ($data as $key => $e) {
+		if ($e['up_id']==$pid) {
+			$flg = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',$step);
+			$e['name']=$flg.$e['name'];
+			$tree[]=$e;
+			getTree($data,$e['id'],$step+1);
+		}
+	}
+	return $tree;
+}
+
+
+

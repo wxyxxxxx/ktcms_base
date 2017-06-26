@@ -1,0 +1,58 @@
+     <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+      <script> 
+
+
+        wx.config({
+                // debug:true,
+                appId: '{$signPackage.appId}',
+                timestamp: '{$signPackage.timestamp}',
+                nonceStr: '{$signPackage.nonceStr}',
+                signature: '{$signPackage.signature}',
+                jsApiList: ['onMenuShareTimeline','onMenuShareAppMessage','showOptionMenu','hideAllNonBaseMenuItem','hideMenuItems'
+                  // 所有要调用的 API 都要加到这个列表中
+                ]
+              });
+              wx.ready(function () {
+                wx.showOptionMenu();
+                
+        //  wx.hideMenuItems({
+        //     menuList: ['menuItem:share:appMessage','menuItem:share:qq','menuItem:share:weiboApp','menuItem:share:facebook','menuItem:share:QZone'] // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮，所有menu项见附录3
+        // });
+
+
+                wx.onMenuShareTimeline({
+                title: '{$title}', // 分享标题
+                link: "{:get_url()}", // 分享链接
+                imgUrl: '{$host}{$share_icon}', // 分享图标
+                success: function () { 
+                  
+                },
+                cancel: function () { 
+                    // 用户取消分享后执行的回调函数
+                }
+              });
+
+             wx.onMenuShareAppMessage({
+                 title: '{$title}', // 分享标题
+                desc: '{$description}', // 分享描述
+                
+                 link: "{:get_url()}", // 分享链接
+                 imgUrl: '{$host}{$share_icon}', // 分享图标
+                 type: '', // 分享类型,music、video或link，不填默认为link
+                 dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+                success: function () { 
+            //         // $.get("{:url('index/index/do_share')}",function(data){
+
+            //         // })
+            //         // $(".zhe").hide();
+                 },
+                 cancel: function () { 
+                     // 用户取消分享后执行的回调函数
+                 }
+             });
+                });
+
+         
+       
+
+      </script>

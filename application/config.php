@@ -15,10 +15,11 @@ return [
     // +----------------------------------------------------------------------
 
     // 应用命名空间
+    'is_weixin'          => 'true',
     'app_namespace'          => 'app',
     // 应用调试模式
     'app_debug'              => true,
-    'err_msg'              => 'json',//html
+    // 'err_msg'              => 'json',//html
     // 应用Trace
     'app_trace'              => false,
     // 应用模式状态
