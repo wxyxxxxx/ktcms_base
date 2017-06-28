@@ -8,7 +8,9 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-
+if(!file_exists(ROOT_PATH."application/ktcms.lock")&&strpos($_SERVER['PHP_SELF'], 'install') == false){
+    echo "<script>location.href='/index.php/install/index/index'</script>";exit;
+}
 return [
     // +----------------------------------------------------------------------
     // | 应用设置
@@ -21,7 +23,7 @@ return [
     'app_debug'              => true,
     // 'err_msg'              => 'json',//html
     // 应用Trace
-    'app_trace'              => false,
+    'app_trace'              => true,
     // 应用模式状态
     'app_status'             => '',
     // 是否支持多模块

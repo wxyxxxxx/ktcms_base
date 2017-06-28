@@ -1,0 +1,111 @@
+*{padding:0;margin:0;font-family: "microsoft yahei";-ms-box-sizing: border-box;-o-box-sizing: border-box;-moz-box-sizing: border-box;-webkit-box-sizing: border-box;box-sizing: border-box;}
+a{text-decoration: none;color:#323232;font-size: 14px;}
+body{font-size: 12px;}
+li{text-decoration: none;list-style-type:none; }
+@font-face {
+	font-family:lanting;
+	src: url(../fonts/lanting.ttf);
+}
+@font-face {
+	font-family:stepnum;
+	src: url(../fonts/indtsallnum.TTF);
+}
+.btn{display: inline-block;border:1px solid #ddd;border-radius: 18px;background-color:#ececec;height: 33px;line-height: 33px;padding:0 26px;}
+.ecinstall{width: 700px;background-color:#fff;overflow: hidden;margin:0 auto;box-shadow: 0 0 10px #ccc;position: absolute;top:20%;left: 50%;margin-left: -350px;display: none;}
+.headtitle{padding:10px;color:#fff;font-size: 14px;}
+.bgborgrey{border-color:#ddd;background-color:#ddd;color:#fff;}
+.bgborblue{background-color:#1380cb;border-color:#1380cb;color:#fff;}
+.btn-big{height: 48px;line-height: 48px;border-radius: 24px;width: 160px;font-size: 18px;font-family: 'lanting';}
+.header{background:url(../images/ec_install_bg.jpg) no-repeat top center;}
+.footer{padding:20px;position: relative;overflow: hidden;}
+.box-cen{text-align: center;}
+.btn-check{background:url(../images/ec_check.png) no-repeat;width: 23px;height: 17px;display: inline-block;vertical-align: middle;}
+.btn-check.on{background-position: 0px -16px;}
+.w20{width: 20%;}
+.w40{width: 40%;}
+.w22{width: 22%;}
+.w34{width: 34%;}
+.hide{display: none;}
+#msg{color: #E01C2C;}
+
+.inatsll-table{position: relative;overflow: hidden;}
+.inatsll-table .td{float: left;}
+.prev-next{border-top:1px solid #ddd;background-color:#f6f6f6;}
+.range{padding-top:50px;}
+.range .step{width: 40px;height: 41px;position: relative;top:-50%;z-index: 5;}
+.range .step span{display: block;width: 30px;height: 30px;border-radius: 50%;text-align: center;line-height: 30px;position: absolute;z-index: 6;left: 50%;margin-left: -15px;top:50%;margin-top:-16px;}
+.range .step span img{opacity: .4;}
+.range .step.on span img{opacity:1;}
+.range .step .round{position: absolute;top: 0;left: 0;width: 40px;height: 40px;background-color:#2d94d5;border-radius: 50%;}
+.range .step.on .round{background: url(../images/e_round.png) no-repeat #258ed2;height: 41px;display: block;top: 0;border-radius: 50%;animation:roundall 1.5s linear infinite;}
+.range .step.onlast .round{background:#258ed2;border:1px solid #fff;}
+.range .step.onlast span img{opacity: 1;}
+.range .line-all{position: absolute;width: 100%;background-color:#5aabde;height: 1px;}
+.range .line-all .white{background-color:#fff;display: block;height: 1px;position: absolute;z-index: 1;}
+.range  .prelative{height: 42px;}
+.range li{float: left;}
+.range li.line{width: 145px;height: 1px;background-color:#fff;}
+.prelative{position: relative;}
+.ecinstall .box-cen{padding-top:30px;}
+.ver-space p{line-height: 24px;}
+.part2 .header,.part3 .header,.part4 .header{height: 240px;padding-top:10px;}
+.part1{/*height: 420px;margin-top:-210px*/}
+.part1 .header{height: 270px;}
+.part1 .footer{/*height: 150px;*/}
+.part1 .footer .box-cen{padding-bottom:26px;padding-top:18px;}
+.box-rule{line-height: 24px;height: 260px;overflow-y: auto;}
+
+
+
+.part2{top:100px}
+.part2 .environment{padding:0 40px;line-height: 24px;}
+.part2 .environment .td-check{background: url(../images/btn-rw.png) no-repeat;width: 16px;height: 16px;display: inline-block;vertical-align: middle;margin-right: 8px;}
+.part2 .environment h3{margin-top:22px;}
+.part2 .environment .th{color:#1380cb;}
+.part2 .environment .td-check.onw{background-position: 0px -24px;}
+.part2 .inatsll-table .td{line-height: 26px;}
+.part2 .status{text-align: center;}
+.prev-next{padding:22px;text-align: center;}
+.prev-next .btn{margin:0 10px;}
+.part3{height: 770px;margin-top:-385px;top:50%;}
+.part3 .box-cen{padding-bottom:29px;}
+.part3 .database{padding:0 40px;}
+.part3 .database h3{color:#505050;}
+.part3 .database ul{margin-top:25px}
+.part3 .database span{display: inline-block;vertical-align: middle;color:#787878;}
+.part3 .database input{display: inline-block;vertical-align: middle;height: 24px;border:1px solid #bfbfbf;border-radius: 5px;padding:0 10px;outline: none;}
+.part3 .database .tips{padding-left: 10px;}
+.part3 .database li{margin:10px 0;}
+.part3 .footer{height: 452px;padding:32px 20px;}
+.part4{height: 580px;margin-top:-290px;top:50%}
+.part4 .install-pz{color:#787878;height: 222px;overflow-y: auto;}
+.part4 .footer{height: 262px;}
+.part5{height: 420px;margin-top:-210px;top: 50%;}
+.part5 .header{height: 280px;position: relative;}
+.part5 .header .box-cen{padding-top:82px;}
+.part5 .prev-next{background-color: #fff;padding:46px 0;}
+/*.part5 .btn-control{top:10px;right: 10px;position: absolute;}
+.part5 .btn-control i{background: url(../images/ec_btn-close.png) no-repeat;display: inline-block;width: 20px;height: 20px;vertical-align: middle;margin-left: 10px;cursor: pointer;}
+.part5 .btn-control .close{background-position: -23px 3px;}
+.part5 .btn-control .fold{background-position: 3px 3px;}*/
+/*round all*/
+@-moz-keyframes roundall{
+	from{-moz-transform: rotate(0);}
+	to{-moz-transform: rotate(360deg);}
+}
+@-webkit-keyframes roundall{
+	from{-webkit-transform: rotate(0);}
+	to{-webkit-transform: rotate(360deg);}
+}
+@-ms-keyframes roundall{
+	from{-ms-transform: rotate(0);}
+	to{-ms-transform: rotate(360deg);}
+}
+@-o-keyframes roundall{
+	from{-o-transform: rotate(0);}
+	to{-o-transform: rotate(360deg);}
+}
+@keyframes roundall{
+	from{transform: rotate(0);}
+	to{transform: rotate(360deg);}
+}

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>{$title}</title>
+		<link rel="stylesheet" href="/install/index/css/install.css" />
+	</head>
+	<body>
+		{eq name="is_lock" value="0"}
+		<div class="part1 ecinstall" style="display: block;">
+			<div class="header">
+				<p class="headtitle">{$title}</p>
+				<p class="box-cen">
+					<!-- <img src="/install/index/images/ec_install1.png" alt="领先的建站程序"/> -->
+				</p>
+			</div>
+			<div class="footer">
+				<div class="box-cen">
+					<a href="javascript:void(0);" class="btn btn-big bgborgrey" id="step1">开始安装</a>
+				</div>
+				<p><span class="btn-check"></span>你已阅读并同意<a href="#" id="readrule">《许可协议》</a></p>
+				<div class="box-rule hide" style="border-top:1px solid #f1f1f1;margin:0 -20px;padding:20px;margin-top:20px;">
+					<p>开天CMS系统（以下简称KTCMS）是由河南开天网络科技有限公司自主开发的一套基于PHP+MYSQL建站软件。
+					<br>
+KTCMS是一套免费、开源的系统。但安装、使用、拥有KTCMS之前，请务必遵守我们软件的一些使用协议：
+<br><br>
+1、严禁去除KTCMS相关的版权信息（后台），前台可去除。
+<br><br>
+2、请尊重KTCMS的开发劳动成果，严禁使用本系统转卖、销售或二次开发后转卖、销售等商业行为！
+<br><br>
+3、请关注KTCMS官方社区了解产品最新动态、功能升级、BUG修复。官方网址：http://www.ktwlkj.cn
+</p>
+				</div>
+			</div>
+		</div>
+		<div class="part2 ecinstall">
+			<div class="header">
+				<p class="headtitle">{$title}</p>
+				<p class="box-cen">
+					<img src="/install/index/images/ec_install2.png" alt="开始安装"/>
+				</p>
+				<div class="range">
+					<ul class="prelative">
+						<li class="line-all"><i class="white" style="width: 0%;"></i></li>
+						<li class="line"></li>
+						<li class="step1 step on"><span><img src="/install/index/images/ec_step1.png"/></span><i class="round"></i></li>
+						<li class="line"></li>
+						<li class="step2 step"><span><img src="/install/index/images/ec_step2.png"/></span><i class="round"></i></li>
+						<li class="line"></li>
+						<li class="step3 step"><span><img src="/install/index/images/ec_step3.png"/></span><i class="round"></i></li>
+						<li class="line"></li>
+					</ul>
+				</div>
+			</div>
+			<div class="footer">
+				<div class="environment">
+					<h3>环境检查</h3>
+					<div class="inatsll-table">
+						<div class="th">
+							<p class="td w34">项目</p>
+							<p class="td w22">所需配置</p>
+							<p class="td w22">推荐</p>
+							<p class="td w22">当前服务器</p>
+						</div>
+						<div id="env">							
+						</div>
+					</div>
+				<!--</div>
+				<div class="environment">-->
+					<h3>目录检查</h3>
+					<div class="inatsll-table">
+						<div class="th">
+							<p class="td w40">目录</p>
+							<p class="td w22">权限</p>
+							<p class="td w22 status">是否可写</p>
+						</div>
+						<div id="install-dir"></div>				
+					</div>
+				</div>
+			</div>
+			<div class="prev-next">
+				<a href="javascript:void(0);" class="btn" id="stepprev2">上一步</a>
+				<a href="javascript:void(0);" class="btn" id="stepnext2">下一步</a>
+				<label id="msg"></label>
+			</div>
+		</div>
+		<div class="part3 ecinstall ">
+			<div class="header">
+				<p class="headtitle">{$title}</p>
+				<p class="box-cen">
+					<img src="/install/index/images/ec_install3.png" alt="安装数据库"/>
+				</p>
+				<div class="range">
+					<ul class="prelative">
+						<li class="line-all"><i class="white" style="width: 25%;"></i></li>
+						<li class="line"></li>
+						<li class="step1 step onlast"><span><img src="/install/index/images/ec_step1.png"/></span><i class="round"></i></li>
+						<li class="line"></li>
+						<li class="step2 step on"><span><img src="/install/index/images/ec_step2.png"/></span><i class="round"></i></li>
+						<li class="line"></li>
+						<li class="step3 step"><span><img src="/install/index/images/ec_step3.png"/></span><i class="round"></i></li>
+						<li class="line"></li>
+					</ul>
+				</div>
+			</div>
+			<div class="footer">
+				<div class="database">
+					<h3>填写数据库信息</h3>
+					<ul>
+						<li>
+							<span class="label-title w20">数据库服务器：</span>
+							<input type="text" id="host" value="localhost:3306" class="w40"/>
+							<span class="tips" class="w40">数据库地址，比如localhost:3306</span>
+						</li>
+						<li>
+							<span class="label-title w20">数据库名：</span>
+							<input type="text" id="dbname" value="" class="w40"/>
+						</li>
+						<li>
+							<span class="label-title w20">数据库用户名：</span>
+							<input type="text" id="uname" value="" class="w40" />
+						</li>
+						<li>
+							<span class="label-title w20">数据库密码：</span>
+							<input type="password" id="upwd" value="" class="w40" />
+						</li>
+						<li>
+							<span class="label-title w20">数据表前缀：</span>
+							<input type="text" id="dbpre" value="kt_" class="w40" />
+							<span class="tips">仅限英文字母和下划线</span>
+						</li>
+					</ul>
+					<h3 style="margin-top:36px">填写管理员信息</h3>
+					<ul>
+						<li>
+							<span class="label-title w20">管理员帐号：</span>
+							<input type="text" id="admname" value="" class="w40" />
+							<span class="tips"></span>
+						</li>
+						<li>
+							<span class="label-title w20">管理员密码：</span>
+							<input type="password" id="admpwd" value="" class="w40" maxlength="20"/>
+							<span class="tips"></span>
+						</li>
+						<li>
+							<span class="label-title w20">联系电话：</span>
+							<input type="tel" id="tel" value="" class="w40" />
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="prev-next">
+				<a href="javascript:void(0);" class="btn" id="step3">下一步</a>
+				<label id="msg"></label>
+			</div>
+		</div>
+		<div class="part4 ecinstall">
+			<div class="header">
+				<p class="headtitle">{$title}</p>
+				<p class="box-cen" style="padding-bottom:30px;">
+					<img src="/install/index/images/ec_install4.png" alt="安装程序"/>
+				</p>
+				<div class="range">
+					<ul class="prelative">
+						<li class="line-all"><i class="white" style="width: 50%;"></i></li>
+						<li class="line"></li>
+						<li class="step1 step onlast"><span><img src="/install/index/images/ec_step1.png"/></span><i class="round"></i></li>
+						<li class="line"></li>
+						<li class="step2 step onlast"><span><img src="/install/index/images/ec_step2.png"/></span><i class="round"></i></li>
+						<li class="line"></li>
+						<li class="step3 step on"><span><img src="/install/index/images/ec_step3.png"/></span><i class="round"></i></li>
+						<li class="line"></li>
+					</ul>
+				</div>
+			</div>
+			<div class="footer">
+				<div class="install-pz ver-space">
+					<br>
+					<p style="text-align: center;">正在安装 ... </p>
+				</div>
+			</div>
+			<div class="prev-next">
+				<a href="javascript:void(0);" class="btn" id="step4">正在安装</a>
+			</div>
+		</div>
+		{/eq}
+		<div class="part5 ecinstall" id="step5" {eq name="is_lock" value="1"}style="display: block;"{/eq}>
+			<div class="header">
+				<p class="headtitle">{$title}</p>
+				<p class="box-cen">
+					<canvas id="canvas" width="45" height="45"></canvas><img src="/install/index/images/ec_install5.png" alt="安装完成"/>					
+				</p>
+				<br />
+				{eq name="is_lock" value="1"}
+				<p style="padding-top: 40px; text-align: center;color: #fff;">如要重新安装，请先删除application目录里的 ktcms.lock文件。</p>
+				{/eq}
+			</div>
+			<div class="prev-next">
+				<a href="/kt" class="btn bgborblue btn-big" style="display: none;">立即体验</a>
+				<a href="/index.html" class="btn bgborblue btn-big">立即体验</a>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="/static/admin/js/jquery.min.js" ></script>
+		<script type="text/javascript" src="/install/index/js/main.js" ></script>
+		<script type="text/javascript">
+			var curStep = getCookie("curstep");
+			
+			function is_tel(v){
+				return /^((\d{4})?(\-)?\d{7,8}|\d{3}\-\d{6}|(\d{3}\-\d{7}-\d{3}))$/.test(v);
+			}
+			function is_phone(v){
+				return /(^(13[0-9]|15[0|3|6|7|8|9]|18[8|9])\d{8}$)/.test(v);
+			}
+			
+			$(".btn-check").click(function(){
+				$(this).toggleClass("on");
+				if($(this).hasClass("on")){
+					$("#step1").removeClass("bgborgrey").addClass("bgborblue");
+				}else{
+					$("#step1").addClass("bgborgrey").removeClass("bgborblue");
+				}
+			});			
+			
+			$("#readrule").click(function(){
+				$(".box-rule").toggleClass("hide");
+			});
+			
+			$("#step1").click(function(){
+				if($(".btn-check").hasClass("on")){
+					initEnv();		
+				}	
+			});
+			
+			function initEnv() {
+				setCookie("curstep", 2);
+					$(".part2").fadeIn(200).siblings().fadeOut(200);
+					$(".line-all .white").animate({
+						width:'25%'
+					},2000);
+					
+					$.getJSON("{:url('index/index')}",{step:1, act:'get_envinfo'}, function(res) {
+						var html = '', isOk=1;						
+						$.each(res.env, function(k, v) {
+								html +='<div class="tr"><p class="td w34">'+v.name+'</p>';
+								html +='<p class="td w22">'+v.require+'</p>';
+								html +='<p class="td w22">'+v.recom+'</p>';
+								html +='<p class="td w22"><span class="td-check '+(v.status==1?"":"onw")+'"></span><label>'+v.val+'</label></p></div>';
+						});
+						$("#env").html(html);
+						
+						html = '';
+						$.each(res.installdir, function(k, v) {
+								html +='<div class="tr"><p class="td w40">'+v.name+'</p>';
+								html +='<p class="td w22">可写</p>';							
+								html +='<p class="td w22 status"><span class="td-check '+(v.status==1?"":"onw")+'"></span></p></div>';
+								if (v.status==0) {
+									isOk=0;
+								}
+						});
+						$("#install-dir").html(html);
+						
+						var lblmsg = $("#stepnext2").siblings("#msg");
+						lblmsg.text("");
+						if(isOk ==1) {
+							$("#stepnext2").addClass("bgborblue");
+						}
+						else
+						{
+							lblmsg.text("环境不满足安装条件，请检查");
+						}
+				});
+			}
+			
+			$("#stepprev2").click(function(){
+				setCookie("curstep", 1);
+				$(".part1").fadeIn(200).siblings().fadeOut(200);
+			});
+			$("#stepnext2").click(function(){
+				if ($(this).hasClass("bgborblue")==false) {
+					return;
+				}
+				setCookie("curstep", 3);
+				$(".part3").fadeIn(200).siblings().fadeOut(200);
+				$(".line-all .white").animate({
+						width:'50%'
+				},2000);
+			});
+			
+			$("#step3").click(function(){	
+				var lblmsg = $("#step3").siblings("#msg");
+				lblmsg.text("");
+				is=true;
+				$(".database input").each(function(){
+					if($(this).val()==""){
+						lblmsg.text("请填写完整");
+						$(this).focus();
+						is=false;
+						return false;
+					}
+				});				
+				if(is==true){
+					if($.trim($("#admpwd").val()).length<6) {
+						lblmsg.text("管理员密码请设置6个字符以上");
+						$("#admpwd").focus();
+						return false;
+					}
+					if(is_tel($("#tel").val()) || is_phone($("#tel").val())){												
+						checkInfo();						
+					}else{
+						lblmsg.text("电话号码不正确");
+						$("#tel").focus();
+						return false;
+					}
+				}				
+			});
+			
+			$("#step4").click(function(){
+				$(".part5").fadeIn(200).siblings().fadeOut(200);
+				$(".line-all .white").animate({
+					width:'100%'
+				},2000);
+			});
+			
+			if (curStep==2) {
+				initEnv();
+			}
+			else if(curStep==3)
+			{
+				$("#stepnext2").trigger("click");
+			}
+			
+			function checkInfo(){
+				var lblmsg = $("#step3").siblings("#msg");
+				var data ={ 
+							host:$("#host").val(),
+							dbname :$("#dbname").val(),
+							uname:$("#uname").val(),
+							upwd:$("#upwd").val(),
+							dbpre:$("#dbpre").val(),
+							admname :$("#admname").val(),
+							admpwd : $("#admpwd").val(),
+							tel:$("#tel").val()
+					};
+				$.getJSON("{:url('index/index')}", {step:2, act: "checkinfo",dbconfig:data}, function(res) {
+					if (res !='ok') {
+						lblmsg.text("数据库连接失败，请检查");
+						return;
+					}
+					setCookie("curstep", 4);
+						
+					$(".part4").fadeIn(200).siblings().fadeOut(200);
+					$("#step3").addClass("bgborblue");
+					$(".line-all .white").animate({width:'75%'},2000);
+					
+					setup(data);//安装
+					return;
+				});
+			}
+			
+			//安装
+			function setup(data) {
+				var done =false;
+				//var time = setInterval(function() {
+					$.getJSON("{:url('index/index')}", {step:2, act: "install", dbconfig:data}, function(res) {
+						if (res.res == 'ok') {
+							$(".part5").fadeIn(200).siblings().fadeOut(200);
+							$(".line-all .white").animate({
+								width:'100%'
+							},2000);
+						}
+						else
+						{
+							lblmsg.text("安装失败，".res.err);
+						}
+					});
+				//}, 1000);
+				
+			}
+		</script>
+	</body>
+</html>

@@ -176,6 +176,7 @@ class common extends Controller
       $model_id=$menu['model_id'];
       $model=get_model($model_id);
       $fields=get_fields_search($model_id,['is_display'=>1]);
+      $s_fields=get_fields_search($model_id,['is_search'=>1]);
 
       $admin=session("admin");
       $auth_arr=json_decode($admin['auth_ids'],true);
@@ -185,47 +186,121 @@ class common extends Controller
       $op_ids3=array_intersect($op_ids, $op_ids2);
       $operation=get_sys_operation($op_ids3);
       // $operation=get_sys_operation($menu['operation']);
-      
-      $where="1=1";
+
+      $where=[];
       $joins=[];
-      $search_fields='';
+      $show_fields=[];
 
       foreach ($fields as $key => $e) {
-          $search_fields.=$e['field'].",";
+          // $show_fields.=$e['field'].",";
+          // $show_fields[$e['field']]=$model_id.'_'.$e['field'];
+          $show_fields[$e['field']]=$e['field'];
+      }
+      unset($e);
+
+      $search_type=trim(input("get.search_type",'eq'));
+      $sss_fields='';
+      $sss_keys='';
+      foreach ($s_fields as $key => $e) {
+          
           if (isset($input[$e['field']])) {
-            $where.=" and ".$e['field']."='".$input[$e['field']]."'";
+            // $where.=" and ".$e['field']."='".$input[$e['field']]."'";
+            // $where.=" and ".$e['field']." like '%".$input[$e['field']]."%'";
+            switch ($search_type) {
+              case 'like':
+                $where[$e['field']]=["$search_type","%".$input[$e['field']]."%"];
+                break;
+              
+              default:
+                $where[$e['field']]=["$search_type",$input[$e['field']]];
+                break;
+            }
+            $sss_fields=$e['field'];
+            $sss_keys=$input[$e['field']];
+            
           }
       }
       unset($e);
-      $search_fields=rtrim($search_fields,',');
-      if ($model['table']!='') {
-        switch ($menu_id) {
-          case '35':
-            $arr=Db::name($model['table'])->field("*")->select();
-
-            $arr=getTree($arr);
-             unset($GLOBALS['tree']);
-            // dump($arr);exit;
-            // dump(getTree($arr));exit;
-            break;
-          
-          default:
-            $arr=Db::name($model['table'])->where($where)->field($search_fields)->paginate($this->sys_config['page_size'],false,['query'=>$input]);
-            break;
-        }
-          
-      }else{
-          $arr=[];
-      }
       
+      // $show_fields=rtrim($show_fields,',');
+
+      $view=Db::view($model['table'],$show_fields);
+      $table=$model['table'];
+
+      $fields2=$fields;
+      foreach ($fields2 as $key => $e) {
+        if (strstr($e['data_from'],'TB|')) {
+          $con_table=explode('|', $e['data_from']);
+          // dump($con_table);exit;
+          $con_table_name=get_model_table_by_id($con_table[1]);
+
+          $con_fields=[];
+          $con_table[4]=isset($con_table[4])?$con_table[4]:['id','name'];
+          $con_table[4]=explode(',', trim($con_table[4],','));
+          $new_fields=get_new_fields($con_table[1],$con_table[4]);
+          foreach ($new_fields as $key2 => &$n) {
+            $con_fields[$n['field']]=$e['field'].'_'.$con_table[1].'_'.$n['field'];
+            $n['field']=$e['field'].'_'.$con_table[1].'_'.$n['field'];
+
+          }
+          unset($n);
+          array_splice($fields, (array_search($e, $fields)+1), 0, $new_fields);
+          // dump($fields);exit;
+          // foreach ($con_table[4] as $key2 => $n) {
+          //   $con_fields[$n]=$con_table[1].'_'.$n;
+          // }
+          // dump($con_table);exit;
+          $alias=$e['field'].'_'.$con_table_name;
+          $view->view(['kt_'.$con_table_name=>$alias],$con_fields,"$alias.".$con_table[2]."=$table.".$e['field']."",'LEFT');
+        }
+      }
+ 
+      //排序
+        $order=$table.'.';
+        $order.=isset($menu['sort_field'])?$menu['sort_field']:'id';
+        $order.=" ";
+        $order.=isset($menu['sort_rule'])?$menu['sort_rule']:"DESC";
+       // dump($order);exit;
+        $page_size=isset($menu['page_size'])&&$menu['page_size']>0?$menu['page_size']:$this->sys_config['page_size'];
+      //
+
+      $arr=$view->where($where)->order($order)->fetchSql(false)->paginate($page_size,false,['query'=>$input]);
+      // dump($arr);exit;
+      // dump($where);exit;
+
+      // if ($model['table']!='') {
+      //   switch ($menu_id) {
+      //     case '35':
+      //       $arr=Db::name($model['table'])->field("*")->select();
+
+      //       $arr=getTree($arr);
+      //        unset($GLOBALS['tree']);
+      //       // dump($arr);exit;
+      //       // dump(getTree($arr));exit;
+      //       break;
+          
+      //     default:
+      //       $arr=Db::name($model['table'])->where($where)->field($search_fields)->paginate($this->sys_config['page_size'],false,['query'=>$input]);
+      //       break;
+      //   }
+          
+      // }else{
+      //     $arr=[];
+      // }
+      // dump($_SERVER["QUERY_STRING"]);exit;
       // $arr=db($tb)->paginate(10,true,['type'=>'bootstrap','var_page' => 'page']);
+      // dump($menu);exit;
+      $this->assign("search_type",$search_type);
       $this->assign("list",$arr);
       $this->assign("model",$model);
       $this->assign("fields",$fields);
+      $this->assign("s_fields",$s_fields);
       $this->assign("model_id",$model_id);
       $this->assign("menu_id",$menu_id);
       $this->assign("menu",$menu);
       $this->assign("operation",$operation);
+      $this->assign("sss_fields",$sss_fields);
+      $this->assign("sss_keys",$sss_keys);
       return $this->fetch();
     }
 
@@ -297,7 +372,7 @@ class common extends Controller
 
         check_auth(5,$menu_id);
         
-        $fields=get_fields($model_id,['is_edit'=>1]);
+        $fields=get_fields_search($model_id,['is_edit'=>1]);
         $arr=db($model['table'])->where("id",$id)->find();
         
         $this->assign([

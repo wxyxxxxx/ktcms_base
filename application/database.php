@@ -23,7 +23,17 @@ return [
     // 端口
     
     'hostport'        => '3306',
-
+    // // 服务器地址
+    // 'hostname'        => '{dbhost}',
+    // // 数据库名
+    // 'database'        => '{dbname}',
+    // // 用户名
+    // 'username'        => '{dbuser}',
+    // // 密码
+    // 'password'        => '{dbpw}',
+    // // 端口
+    
+    // 'hostport'        => '{dbport}',
 
     // 'hostname'        => '127.0.0.1',
     // // 数据库名
@@ -42,7 +52,7 @@ return [
     // 数据库编码默认采用utf8
     'charset'         => 'utf8mb4',
     // 数据库表前缀
-    'prefix'          => 'kt_',
+    'prefix'          => '{tablepre}',
     // 数据库调试模式
     'debug'           => true,
     // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)

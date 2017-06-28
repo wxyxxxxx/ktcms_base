@@ -28,7 +28,7 @@
     <?php
     }
     ?>
-   
+
 
     
     </div>
@@ -46,18 +46,28 @@
 
 
 
-        <div class="example"> 
+        <div class="example" id="layer-photos-demo" > 
   
           <div class="col-sm-12 form-inline ">
           <div style="text-align: center;">
             <select class="form-control" id="w_search">
-              {volist name="fields" id="vo"}
-              {eq name="vo.is_search" value='1'}
-                <option value="{$vo.field}">{$vo.name}</option>
-              {/eq}
+              {volist name="s_fields" id="vo"}
+              
+                <option value="{$vo.field}" {eq name="sss_fields" value="$vo['field']"}selected{/eq}>{$vo.name}</option>
+            
               {/volist}
             </select>
-             <input class="form-control" value="" type="text" id="w_str" onkeydown="javascript:enterIn(event);"> <button type="button" id="w_s" class=" btn btn-primary">搜索</button>
+            <select class="form-control" id="w_search_type">
+             
+              
+                <option value="eq" {eq name="search_type" value="eq"}selected{/eq}>等于</option>
+                <option value="like" {eq name="search_type" value="like"}selected{/eq}>含有</option>
+                <option value="gt" {eq name="search_type" value="gt"}selected{/eq}>大于</option>
+                <option value="lt" {eq name="search_type" value="lt"}selected{/eq}>小于</option>
+            
+              
+            </select>
+             <input class="form-control" value="{$sss_keys}" type="text" id="w_str" onkeydown="javascript:enterIn(event);"> <button type="button" id="w_s" class=" btn btn-primary">搜索</button>
             </div>
           </div>
      
@@ -71,14 +81,16 @@
             }
           }
 
+
           $(function(){
 
 
            $("#w_s").click(function(){
              var str=$("#w_str").val();
              var field=$("#w_search").val();
+             var search_type=$("#w_search_type").val();
              layer.load(2);
-             location.href="{:url('admin/common/data_list')}?menu_id={$menu_id}&"+field+"="+str;
+             location.href="{:url('admin/common/data_list')}?menu_id={$menu_id}{$menu.param}&search_type="+search_type+"&"+field+"="+str;
            })
           })
           </script>
@@ -109,30 +121,29 @@
           </thead> 
           <tbody>
             {volist name='list' id="vo"} 
-
+           
            <tr class="gradeX">
            <td aid="{$vo.id}" class="bs-checkbox "><input class="ww_check" aid="{$vo.id}" type="checkbox" name=""></td> 
             {volist name="fields" id="n"}
+           
+           
               <td>
               {switch name="n.edit_type"}
                   
                   {case value="3"}
                         {$vo[$n.field]}    
                   {/case}
-                  {case value="4"}      
-                    {$vo[$n.field]|get_list_show=###,$n['data_from']}                          
-                  {/case}
-                  {case value="5"}      
-                    {$vo[$n.field]|get_list_show=###,$n['data_from']}                          
-                  {/case}
-                  {case value="6"}      
-                    {$vo[$n.field]|get_list_show=###,$n['data_from']}                          
-                  {/case}
-                  {case value="7"}      
-                    {$vo[$n.field]|get_list_show=###,$n['data_from']}                          
-                  {/case}
-                  {case value="8"}      
-                    {$vo[$n.field]|get_list_show=###,$n['data_from']}                          
+                  {case value="4|5|6|7|8"}      
+                                        
+                         {php}
+                         if(strstr($n['data_from'],'TB|')){
+
+                            $con_table=explode('|', $n['data_from']);
+                            echo $vo[$n['field']];
+                         }else{
+                            echo get_list_show($vo[$n['field']],$n['data_from']);
+                         }
+                         {/php}                
                   {/case}
                   {case value="9"}
                     {$vo[$n.field]|date="Y-m-d H:i:s",###}
@@ -141,7 +152,7 @@
                     <a target="_blank" href="{$vo[$n.field]}">{$vo[$n.field]}</a>
                   {/case}
                   {case value="11"}
-                    <a target="_blank" href="{$vo[$n.field]}"><img style="width: 50px;height: 50px" src="{$vo[$n.field]}"></a>
+                    <img layer-pid="1" layer-src="{$vo[$n.field]}" src="{$vo[$n.field]}" alt="{$vo.id}" style="width: 50px;height: 50px" >
                   {/case}
                   {case value="14"}
                     <span style="background-color: {$vo[$n.field]};width: 30px;height: 30px;display: block;border-radius:25px;"></span>
@@ -363,7 +374,7 @@
           res=eval("("+res+")");
           if (res.code==1) {
              
-              // toastr.success(res.msg);
+              toastr.success(res.msg);
           }else{
               toastr.error(res.msg);return false;
           }
@@ -392,7 +403,10 @@
         }
       })
     })
-
+    layer.photos({
+      photos: '#layer-photos-demo'
+      ,shift: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+    }); 
   })
 </script>
 

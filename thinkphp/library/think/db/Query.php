@@ -902,11 +902,12 @@ class Query
                         } else {
                             $name = $alias . '.' . $key;
                         }
-                        $fields[]                   = $name . ' AS ' . $val;
+                        $fields[]                   = $name . ' AS ' . '`'.$val.'`';
                         $this->options['map'][$val] = $name;
                     }
                 }
             }
+
             $this->field($fields);
             if ($on) {
                 $this->join($table, $on, $type);

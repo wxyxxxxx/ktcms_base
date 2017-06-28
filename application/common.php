@@ -10,7 +10,9 @@
 // +----------------------------------------------------------------------
 
 // 应用公共文件
+use think\Db;
 use weixin\WxApi;
+
 require_once("data.php");
  function ejson($code,$msg,$data='')
 {
@@ -41,6 +43,7 @@ function is_json($string) {
 function get_data_from($data_from){
 	$arr=$data_from;
 	$new_arr=[];
+	// dump(strpos($arr,'TB|'));exit;
 	if(strpos($arr,':')){
 
 	    $arr2=explode(';', rtrim($arr,';'));
@@ -54,7 +57,30 @@ function get_data_from($data_from){
 	    }
 
 
+	}elseif(strstr($arr,'TB|')){
+		$str_arr=explode('|', $arr);
+		// dump($str_arr);exit;
+		$con_table_name=get_model_table_by_id($str_arr[1]);
+		$field=isset($str_arr[4])?$str_arr[4]:'*';
+		$where=isset($str_arr[5])?$str_arr[5]:'1=1';
+		$field=explode(',', trim($field,','));
+		if (!in_array($str_arr[2], $field)) {
+			$field[]=$str_arr[2];
+		}
+		if (!in_array($str_arr[3], $field)) {
+			$field[]=$str_arr[3];
+		}
+
+		$new_arr=Db::name($con_table_name)->where($where)->field($field)->select();
+		// foreach ($new_arr as $key => &$e) {
+		// 	// if (isset($e['name'])) {
+				
+		// 	// }
+		// 	// $e['name']=$e[$str_arr[3]];
+		// }
+		// dump($new_arr);exit;
 	}else{
+
 		$arr2=explode('|',$arr);
 
 		if (isset($arr2[1])) {
@@ -68,6 +94,20 @@ function get_data_from($data_from){
 	return $new_arr;
 }
 
+function msg($str=''){
+	echo "<script>alert('".$str."');</script>";exit;
+}
+function get_model_table_by_id($id=0){
+	$table=db("sys_model")->where("id",$id)->value("table");
+	if (!$table) {
+		if (request()->isGet()){
+			msg("模型不存在");
+		}else{
+			ejson(-1,"模型不存在");
+		}
+	}
+	return $table;
+}
 function filter_input_data($data,$fields){
 	
 	foreach ($fields as $key => $e) {
@@ -152,7 +192,10 @@ function get_fields($model_id=0,$where){
 
 }
 function get_fields_search($model_id=0,$where){
-	return db("sys_fields")->alias("a")->where("model_id",$model_id)->where($where)->order("sort asc")->select();
+	return Db::name("sys_fields")->alias("a")->where("model_id",$model_id)->where($where)->order("sort asc")->select();
+}
+function get_new_fields($model_id=0,$fields=''){
+	return db("sys_fields")->where("model_id",$model_id)->where("field",'in',$fields)->order("sort asc")->select();
 }
 function get_sys_config(){
 	return db("sys_config")->where("status",1)->find();
@@ -278,3 +321,18 @@ function wx_signPackage(){
 	return $signPackage;
 }
 
+/**@name 获取随机字符串，大小写字母+数字，转变不区分大小写
+*@param $len 长度
+*@param $ignoreCase 忽略大小写
+ * */
+function get_salt($len=6, $ignoreCase=true)
+{
+  //return substr(uniqid(rand()), -$len);
+  $discode="123546789wertyupkjhgfdaszxcvbnm".($ignoreCase?'': 'QABCDEFGHJKLMNPRSTUVWXYZ');
+  $code_len = strlen($discode);
+  $code = "";  
+  for($j=0; $j<$len; $j++){
+    $code .= $discode[rand(0, $code_len-1)];
+  }
+  return $code;
+}

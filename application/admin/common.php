@@ -383,5 +383,28 @@ function getTree($data,$pid=0,$step=0){
 	return $tree;
 }
 
+function get_search_table($str=''){
+	$arr2=explode('|',$str);
+	if (isset($arr2[1])) {
+		$arr3=explode(',', $arr2[1]);
+	}else{
+		$arr3=array();
+	}
+	return $arr2[0];
+}
+function build_search_condition($model_id=0){
+	$input[$e['field']];
+	$arr=db("sys_fields")->where("model_id",$model_id)->where("is_search",1)->order("sort asc")->select();
+	$str='';
+	foreach ($arr as $key => $e) {
+		if (isset($input[$e['field']])) {
 
+		  $stable=get_search_table();
+		  if ($stable!='') {
+		  	$str.=" and ".$e['field']." like '%".$input[$e['field']]."%'";
+		  }
+		  $str.=" and ".$e['field']." like '%".$input[$e['field']]."%'";
+		}
+	}
 
+}
