@@ -13,6 +13,23 @@
             <script type="text/javascript" charset="utf-8" src="/static/ueditor/ueditor.all.js"> </script>
          <script type="text/javascript" charset="utf-8" src="/static/ueditor/lang/zh-cn/zh-cn.js"></script>
 
+         <script charset="utf-8" src="/static/kindeditor/kindeditor-all.js"></script>
+         <script charset="utf-8" src="/static/kindeditor/lang/zh-CN.js"></script>
+
+
+         <link rel="stylesheet" type="text/css" href="/static/simditor-2.3.6/site/assets/styles/simditor.css" />
+
+    
+         <script type="text/javascript" src="/static/simditor-2.3.6/site/assets/scripts/module.js"></script>
+         <script type="text/javascript" src="/static/simditor-2.3.6/site/assets/scripts/hotkeys.js"></script>
+         <script type="text/javascript" src="/static/simditor-2.3.6/site/assets/scripts/uploader.js"></script>
+         <script type="text/javascript" src="/static/simditor-2.3.6/site/assets/scripts/simditor.js"></script>
+  <!--        <script>
+                 KindEditor.ready(function(K) {
+                         window.editor = K.create('#editor_id');
+                 });
+         </script> -->
+
          <style type="text/css">
            .chosen-container{min-width: 253px;}
            .w_red{border: 1px solid red}
@@ -497,7 +514,34 @@
                                                                  </script>
 
                                                               {/case}
+{case value="21"}
+<textarea id="kindeditor_{$vo.field}" class="w_kindeditor" name="{$vo.field}" style="width:800px;height:500px;">
+{$list[$vo['field']]}
+</textarea>
+<script type="text/javascript">
+  
 
+    KindEditor.ready(function(K) {
+            var kedit_{$vo.field} = K.create('#kindeditor_{$vo.field}',{
+                afterBlur: function () { this.sync(); }
+            });
+    });
+
+</script>
+{/case}
+{case value="22"}
+<textarea id="simditor_{$vo.field}"  name="{$vo.field}"  style="width:800px;height:500px;">
+{$list[$vo['field']]}
+</textarea>
+<script type="text/javascript">
+  
+
+var simditor_{$vo.field} = new Simditor({
+  textarea: $('#simditor_{$vo.field}')
+});
+
+</script>
+{/case}
                                                               {case value="18"}
                                                                 <input name="{$vo.field}" value="{$list[$vo['field']]}" type="hidden" class="form-control">
                                                               {/case}
@@ -549,6 +593,9 @@
   
   $(function(){
     $(".w_sb").click(function(){
+
+
+
       var data=$("#form_s").serialize();
       var is_rule_check=1;
       $(".w_rule").each(function(){
