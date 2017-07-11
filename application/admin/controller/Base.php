@@ -11,6 +11,7 @@ class base extends Controller
     public $admin_id;
     public $sys_config;
 
+
     public function _initialize()
      {
       // dump(PREFIX);exit;
