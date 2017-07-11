@@ -40,7 +40,7 @@ function is_json($string) {
 }
 
 
-function get_data_from($data_from){
+function get_data_from($data_from,$menu=[],$field_param=''){
 	$arr=$data_from;
 	$new_arr=[];
 	// dump(strpos($arr,'TB|'));exit;
@@ -61,8 +61,8 @@ function get_data_from($data_from){
 		$str_arr=explode('|', $arr);
 		// dump($str_arr);exit;
 		$con_table_name=get_model_table_by_id($str_arr[1]);
-		$field=isset($str_arr[4])?$str_arr[4]:'*';
-		$where=isset($str_arr[5])?$str_arr[5]:'1=1';
+		$field=(isset($str_arr[4])&&$str_arr[4]!='')?$str_arr[4]:'*';
+		$where=(isset($str_arr[5])&&$str_arr[5]!='')?$str_arr[5]:'1=1';
 		$field=explode(',', trim($field,','));
 		if (!in_array($str_arr[2], $field)) {
 			$field[]=$str_arr[2];
@@ -70,8 +70,28 @@ function get_data_from($data_from){
 		if (!in_array($str_arr[3], $field)) {
 			$field[]=$str_arr[3];
 		}
+		if (isset($menu['recursive_param'])&&$menu['recursive_param']==$field_param) {
+
+			if ($menu['is_recursive']==1) {
+				if (!in_array($field_param, $field)) {
+					$field[]=$field_param;
+				}
+			  
+			}
+		}
 
 		$new_arr=Db::name($con_table_name)->where($where)->field($field)->select();
+		// dump($new_arr);exit;
+		if (isset($menu['recursive_param'])&&$menu['recursive_param']==$field_param) {
+
+			if ($menu['is_recursive']==1) {
+
+			  $recursive_param=!empty($menu['recursive_param'])?$menu['recursive_param']:'up_id';
+			  $new_arr=getTree($new_arr,$recursive_param);
+			  unset($GLOBALS['tree']);
+			}
+		}
+
 		// foreach ($new_arr as $key => &$e) {
 		// 	// if (isset($e['name'])) {
 				
@@ -112,7 +132,8 @@ function filter_input_data($data,$fields){
 	
 	foreach ($fields as $key => $e) {
 		if ($e['is_allow_null']==1) {
-			if (!isset($data[$e['field']])||empty($data[$e['field']])) {
+			// if (!isset($data[$e['field']])||empty($data[$e['field']])) {
+			if (!isset($data[$e['field']])||$data[$e['field']]==='') {
 				ejson(-1,$e['name'].'不能为空');
 			}
 		}

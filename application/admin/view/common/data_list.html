@@ -1,6 +1,10 @@
 {include file="../application/admin/view/common/common_head.html"}
 <link href="/static/admin/css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
     <script src="/static/admin/js/jquery.min.js?v=2.1.4"></script>
+
+    <link rel="stylesheet" href="/static/plugins/tipso/css/tipso.css">
+
+    <script src="/static/plugins/tipso/js/tipso.js"></script>
 <body class="gray-bg">
   <div class="wrapper wrapper-content"> 
   <!-- <div class="wrapper wrapper-content animated fadeInRight">  -->
@@ -14,16 +18,17 @@
     </div> 
     <div class="ibox-content"> 
     <div class="btn-group hidden-xs"  role="group">
-    <?php if(isset($_GET['diy'])&&$_GET['diy']==1||1==1){
+    <?php if(isset($_GET['diy'])&&$_GET['diy']==1||session("admin_type")==1){
     ?>
 
     <a href="#modal-form"  class="btn btn-outline btn-sm btn-default " data-toggle="modal">新增数据表</a>
+    <a href="{:url('admin/develop/table_desgin')}?table=kt_{$model.table}"  class="btn btn-success btn-sm">数据表设计</a>
     <a href="javascript:void(0);" opentype="1" _href="{:url('admin/common/edit_data')}?menu_id=3&id={$model_id}"  class="btn w_open btn-info btn-sm">模型设置</a>
      <a href="javascript:void(0);" opentype="1" _href="{:url('admin/common/edit_data')}?menu_id=2&id={menu_id}" menu_id="{$menu_id}" class="btn btn-success btn-sm w_open">菜单设置</a>
-    <a href="{:url('admin/develop/table_desgin')}?table=kt_{$model.table}"  class="btn btn-info btn-sm">数据表设计</a>
+    
    
-    <a href="javascript:void(0);" opentype="1" _href="{:url('admin/common/data_list')}?menu_id=48&mid={$model_id}" menu_id="{$menu_id}" class="btn btn-success btn-sm w_open">TAB设置</a>
-    <a href="{:url('admin/develop/model_fields')}?model_id={$model_id}"  class="btn btn-info btn-sm">字段设置</a>
+    <a href="javascript:void(0);" opentype="1" _href="{:url('admin/common/data_list')}?menu_id=48&mid={$model_id}" menu_id="{$menu_id}" class="btn btn-info btn-sm w_open">TAB设置</a>
+    <a href="{:url('admin/develop/model_fields')}?model_id={$model_id}"  class="btn btn-success btn-sm">表单构建</a>
 
     <?php
     }
@@ -34,7 +39,7 @@
     </div>
        <button onClick="javascript:location.reload()" type="button" style="float:right" class="btn btn-primary btn-sm">刷新页面</button>
        {notempty name="menu.remark"}
-       <div class="alert alert-success">{$menu.remark}</div>
+       <div class="alert alert-success" style="border-radius:0">{$menu.remark}</div>
        {/notempty}
         
      <div class="row row-lg"> 
@@ -99,12 +104,59 @@
       {volist name="operation.top" id="op"}
   
 
-      <a aid="0" menu_id="{$menu_id}" opentype="{$op.open_type}"  _href="{$op.url}" class="btn  btn-sm {$op.event_class} {$op.color_class}" >{$op.name}</a>
+      <?php 
+      $p_str=$op['url'];
+      $p_result = array();
+      preg_match_all("/(?:\{)(.*)(?:\})/iSU",$p_str, $p_result);
+      for($i=0,$j=count($p_result[0]);$i<$j;$i++){ 
+        $rep_str='';
+
+        $rep_arr=explode('.',$p_result['1'][$i]);
+        if(isset($rep_arr[1])){
+
+          $rep_str2=$rep_arr[0].'["'.$rep_arr[1].'"]';
+          $rep_arr2=$$rep_arr[0];
+          $rep_str=$rep_arr2[$rep_arr[1]];
+
+        }elseif(isset($$p_result['1'][$i])){
+          $rep_str=$$p_result['1'][$i];
+        }else{
+          
+          
+
+        }
+        
+
+        $p_str=str_replace($p_result['0'][$i],$rep_str,$p_str);
+        
+      } 
+      $op['url']=$p_str;
+      ?>
+
+      
+
+
+      <a title="{$op.name}" title2="{$op.name}" aid="0" menu_id="{$menu_id}" text="{$op.text}" opentype="{$op.open_type}"  _href="{$op.url}" class="w_btn btn btn-sm {$op.event_class} {$op.color_class}" style="border-color:{$op.color};background-color: {$op.color}"><i class="{$op.icon_class}"> </i></a>
+
+  
        {/volist}
+      
+      
     
      </div>
-
-         <table class="table table-bordered w_edit" > 
+     {switch name="menu.list_show_type"}
+     {case value="0"}
+     <table class="table table-bordered w_edit" >
+     {/case}
+     {case value="1"}
+     <table class="table  w_edit" >
+     {/case}
+     {case value="2"}
+     <table class="table table-bordered w_edit" >
+     {/case}
+     {/switch}
+         <!--   -->
+         <!-- <table class="table w_edit" >  -->
           <thead> 
            <tr> 
              <th><input type="checkbox" name="" id="w_check"></th> 
@@ -157,7 +209,9 @@
                   {case value="14"}
                     <span style="background-color: {$vo[$n.field]};width: 30px;height: 30px;display: block;border-radius:25px;"></span>
                   {/case}
-                 
+                 {case value="19"}
+                   <i class="{$vo[$n.field]}"></i>
+                 {/case}
                   {default /}
                   {eq name="n.field" value="sort"}
                   <input aid="{$vo.id}" class="w_sort" style="width: 50px;" type="number" value="{$vo[$n.field]}"/>
@@ -176,9 +230,26 @@
          <div class="btn-group hidden-xs"  role="group"> 
         
          {volist name="operation.list" id="op"}
+
+         <?php 
+         $p_str=$op['url'];
+         $p_result = array();
+         preg_match_all("/(?:\{)(.*)(?:\})/iSU",$p_str, $p_result);
+         for($i=0,$j=count($p_result[0]);$i<$j;$i++){ 
+           $rep_str='';
+           if(isset($$p_result['1'][$i])){
+             $rep_str=$$p_result['1'][$i];
+           }elseif(isset($vo[$p_result['1'][$i]])){
+             $rep_str=$vo[$p_result['1'][$i]];
+           }
+
+           $p_str=str_replace($p_result['0'][$i],$rep_str,$p_str);
+         } 
+         $op['url']=$p_str;
+         ?>
          <!-- <a cz="1" aid="{$vo.id}" href="{:url('admin/common/edit_data')}?model_id={$model['id']}&id={$vo.id}" class="btn btn-primary btn-sm w_bc">编辑</a> -->
 
-         <a  aid="{$vo.id}" menu_id="{$menu_id}" opentype="{$op.open_type}"  _href="{$op.url}" class="btn  btn-xs {$op.event_class} {$op.color_class}" >{$op.name}</a>
+         <a title="{$op.name}" title2="{$op.name}" aid="{$vo.id}" text="{$op.text}" menu_id="{$menu_id}" opentype="{$op.open_type}"  _href="{$op.url}" class="w_btn btn  btn-xs {$op.event_class} {$op.color_class}" style="border-color:{$op.color};background-color: {$op.color}"><i class="{$op.icon_class}"> </i><!-- {$op.name} --></a>
           {/volist}
          </div>
        
@@ -234,6 +305,15 @@
 </script>
 <script type="text/javascript">
   $(function(){
+
+    $('.w_btn').tipso({
+        useTitle: true,
+        background:'#1ab394',
+        width:100,
+        delay:100,
+    });
+
+
     var width=document.body.clientWidth*0.8;
     var height=document.body.clientHeight*0.9;
     console.log(width+';'+height);
@@ -241,10 +321,12 @@
     $(".w_open").click(function(){
       var p=$(this);
       var name=$(this).html();
+      var title=$(this).attr("title2");
       var open_type=p.attr("opentype");
       var menu_id=p.attr("menu_id");
       var id=p.attr("aid");
       var href=p.attr("_href");
+      var text=p.attr("text");
       href=href.replace(/{menu_id}/g, menu_id)
       href=href.replace(/{id}/g, id)
       if (open_type==1) {
@@ -253,7 +335,7 @@
         location.href=href;return false;
       }else if (open_type==3) {
 
-          var ll=layer.confirm('您确定要执行该操作：'+name+'？', {
+          var ll=layer.confirm('您确定要执行该操作：'+title+'？', {
             btn: ['确定','取消'] //按钮
           }, function(){
               layer.close(ll);
@@ -271,16 +353,36 @@
           });
 
           return false;
+      }else if(open_type==4){
+        layer.prompt({title: text, formType: 0}, function(pass, index){
+
+          $.post(href,{id:id,pass:pass},function(res){
+              res=eval("("+res+")");
+              if (res.code==1) { 
+                  toastr.success(res.msg);
+                  layer.close(index);
+                  setTimeout(function(){location.reload()},1000);
+                  return false;
+              }else{
+                  toastr.error(res.msg);return false;
+              }
+          })
+          
+        
+        });
+        return false;
       }else{
          location.href=href;return false;
       }
-      layer.open({
+      parent.layer.open({
         type: 2,
-        title: p.html(),
+        title: 'id='+id+':'+title,
         shadeClose: true,
         closeBtn: 1,
         shade: false,
+        anim:6,
         maxmin: true, //开启最大化最小化按钮
+        style:"demo-class",
        area: [width+'px', height+'px'],
         content: href
       });
@@ -393,7 +495,7 @@
       $.post("{:url('admin/develop/table_edit')}?id="+id,{table:name,comment:comment,engine:table_engine},function(data){
         data=eval("("+data+")")
         if (data.code==1) {
-           toastr.success(data.msg);
+           
            $("input[name='table_name']").val('');
            toastr.success(data.msg);return false;
            // location.reload();

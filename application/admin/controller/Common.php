@@ -4,56 +4,46 @@ use think\Db;
 use think\Request;
 use think\Controller;
 use think\Cache;
-class common extends Controller
+class common extends Base
 {   
-    public $admin;
-    public $admin_id;
-    public $sys_config;
 
-    public function _initialize()
-     {
-        header("Content-type: text/html; charset=utf-8");
-        $this->assign("title","KTCMS");
-        $this->assign("host_url","http://".$_SERVER['SERVER_NAME']);
-        $action       = Request::instance()->action();
-        $this->check_admin_login();
-        $this->sys_config=get_sys_config();
-        $this->assign(['sys_config'=>$this->sys_config]);
-
-        get_nav();
-// get_tables();exit;
-        // $arr=explode(",",'');
-        // dump(json_decode(json_decode(json_encode([['id'=>1,'name'=>'内部'],['id'=>1,'name'=>'内部']])))) ;exit;
-     }
-
-     public function _empty($name)
-     {  
-        header("Content-type:text/html;charset=utf-8");
-        exit("找不到该方法".$name);
-         
-     }
-
+/**
+ * 欢迎页面
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T18:32:16+0800
+ */
      public function welcome()
      {  
        // echo "V1.0.0";exit;
          return $this->fetch();
      }
-
+/**
+ * 修改管理员密码
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T18:32:40+0800
+ */
      public function edit_admin_pwd(){
       $admin_id=session("admin_id");
       $old_pwd=input("post.old_pwd",'');
       $new_pwd=input("post.new_pwd",'');
-      $arr=db("sys_admin")->where("id",$admin_id)->field("pwd")->find();
+      $arr=Db::name("sys_admin")->where("id",$admin_id)->field("pwd")->find();
       if ($arr['pwd']!=md5($old_pwd)) {
         ejson(-1,"原始密码错误");
       }
       $data['pwd']=md5($new_pwd);
-      db("sys_admin")->where("id",$admin_id)->update($data);
+      Db::name("sys_admin")->where("id",$admin_id)->update($data);
       ejson(1,"修改成功");
      }
 
 
-
+/**
+ * 首页
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T18:33:55+0800
+ */
      public function index(){
         $menus=get_admin_menus();
         $this->assign(['menus'=>$menus]);
@@ -61,28 +51,9 @@ class common extends Controller
         return $this->fetch();
      }
 
-
-
-    public function check_admin_login(){
-        $admin_id=session("admin_id");
-        if ($admin_id>0) {
-           $admin_name=session("account");
-           $arr=db("sys_admin")->alias("a")->join("kt_sys_role b","a.role_id=b.id")->where("a.id",$admin_id)->field("a.account,a.id,a.role_id,b.auth_ids,b.name as role_name")->find();
-
-           // if ($admin_id==1) {
-             
-           // }
-           session('admin',$arr);
-           $this->assign("arr",$arr);
-           $this->assign("admin_name",$admin_name);
-           $this->assign("admin",$arr);
-           $this->admin_id=$admin_id;
-        }else{
-            $this->redirect("admin/login/index");exit;
-        }
-    }
-
- 
+/**
+ * 导出excel
+ */
 
     public function daochu(){
        error_reporting("E_ALL");
@@ -104,7 +75,7 @@ class common extends Controller
         }
         $search_fields=rtrim($search_fields,',');
         if ($model['table']!='') {
-            $arr=db($model['table'])->where($where)->field($search_fields)->limit(10000)->select();
+            $arr=Db::name($model['table'])->where($where)->field($search_fields)->limit(10000)->select();
         }else{
             $arr=[];
         }
@@ -168,10 +139,16 @@ class common extends Controller
        $objWriter->save('php://output');
        exit("导出成功");
     }
-
+/**
+ * 数据列表
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T18:34:44+0800
+ */
     public function data_list(){
       $menu_id=input("get.menu_id",'');
-     $input=input("get.");
+      $input=input("get.");
+      $do_export=input("get.do_export",0);
       $menu=get_menu($menu_id);
       $model_id=$menu['model_id'];
       $model=get_model($model_id);
@@ -190,6 +167,9 @@ class common extends Controller
       $where=[];
       $joins=[];
       $show_fields=[];
+      $search_type=trim(input("get.search_type",'eq'));
+      $sss_fields='';
+      $sss_keys='';
 
       foreach ($fields as $key => $e) {
           // $show_fields.=$e['field'].",";
@@ -198,73 +178,113 @@ class common extends Controller
       }
       unset($e);
 
-      $search_type=trim(input("get.search_type",'eq'));
-      $sss_fields='';
-      $sss_keys='';
-      foreach ($s_fields as $key => $e) {
+
+
+      if ($model['table']!='') {
+        // $show_fields=rtrim($show_fields,',');
+
+        $view=Db::view($model['table'],$show_fields);
+        $table=$model['table'];
+
+        $fields2=$fields;
+        $unset_i=0;
+        foreach ($fields2 as $key => $e) {
           
-          if (isset($input[$e['field']])) {
-            // $where.=" and ".$e['field']."='".$input[$e['field']]."'";
-            // $where.=" and ".$e['field']." like '%".$input[$e['field']]."%'";
-            switch ($search_type) {
-              case 'like':
-                $where[$e['field']]=["$search_type","%".$input[$e['field']]."%"];
-                break;
-              
-              default:
-                $where[$e['field']]=["$search_type",$input[$e['field']]];
-                break;
+          if (strstr($e['data_from'],'TB|')) {
+
+            $con_table=explode('|', $e['data_from']);
+            // dump($con_table);exit;
+            $con_table_name=get_model_table_by_id($con_table[1]);
+
+            $con_fields=[];
+            $con_table[4]=isset($con_table[4])?$con_table[4]:$con_table[3];
+            $con_table[4]=explode(',', trim($con_table[4],','));
+            $new_fields=get_new_fields($con_table[1],$con_table[4]);
+            foreach ($new_fields as $key2 => &$n) {
+              $con_fields[$n['field']]=$e['field'].'_'.$con_table[1].'_'.$n['field'];
+              $n['field']=$e['field'].'_'.$con_table[1].'_'.$n['field'];
+
+              if ($menu['is_recursive']==1) {
+                if ($menu['recursive_param']==$e['field']&&$n['field']==$e['field'].'_'.$con_table[1].'_'.$con_table[3]) {
+                  // dump($e['field'].'_'.$con_table[1].'_'.$con_table[3]);exit;
+                  unset($new_fields[$key2]);
+                }
+              }
             }
-            $sss_fields=$e['field'];
-            $sss_keys=$input[$e['field']];
+            unset($n);
             
+            array_splice($fields, (array_search($e, $fields)+1-$unset_i), 0, $new_fields);
+            array_splice($s_fields, (array_search($e, $s_fields)+1-$unset_i), 0, $new_fields);
+            
+            unset($fields[$key-$unset_i]);
+            unset($s_fields[$key-$unset_i]);
+            $unset_i++;
+            // dump($fields);exit;
+            // foreach ($con_table[4] as $key2 => $n) {
+            //   $con_fields[$n]=$con_table[1].'_'.$n;
+            // }
+            // dump($con_table);exit;
+            $alias=$e['field'].'_'.$con_table_name;
+            $view->view([PREFIX.$con_table_name=>$alias],$con_fields,"$alias.".$con_table[2]."=$table.".$e['field']."",'LEFT');
           }
-      }
-      unset($e);
-      
-      // $show_fields=rtrim($show_fields,',');
-
-      $view=Db::view($model['table'],$show_fields);
-      $table=$model['table'];
-
-      $fields2=$fields;
-      foreach ($fields2 as $key => $e) {
-        if (strstr($e['data_from'],'TB|')) {
-          $con_table=explode('|', $e['data_from']);
-          // dump($con_table);exit;
-          $con_table_name=get_model_table_by_id($con_table[1]);
-
-          $con_fields=[];
-          $con_table[4]=isset($con_table[4])?$con_table[4]:['id','name'];
-          $con_table[4]=explode(',', trim($con_table[4],','));
-          $new_fields=get_new_fields($con_table[1],$con_table[4]);
-          foreach ($new_fields as $key2 => &$n) {
-            $con_fields[$n['field']]=$e['field'].'_'.$con_table[1].'_'.$n['field'];
-            $n['field']=$e['field'].'_'.$con_table[1].'_'.$n['field'];
-
-          }
-          unset($n);
-          array_splice($fields, (array_search($e, $fields)+1), 0, $new_fields);
-          // dump($fields);exit;
-          // foreach ($con_table[4] as $key2 => $n) {
-          //   $con_fields[$n]=$con_table[1].'_'.$n;
-          // }
-          // dump($con_table);exit;
-          $alias=$e['field'].'_'.$con_table_name;
-          $view->view(['kt_'.$con_table_name=>$alias],$con_fields,"$alias.".$con_table[2]."=$table.".$e['field']."",'LEFT');
         }
-      }
- 
-      //排序
-        $order=$table.'.';
-        $order.=isset($menu['sort_field'])?$menu['sort_field']:'id';
-        $order.=" ";
-        $order.=isset($menu['sort_rule'])?$menu['sort_rule']:"DESC";
-       // dump($order);exit;
-        $page_size=isset($menu['page_size'])&&$menu['page_size']>0?$menu['page_size']:$this->sys_config['page_size'];
-      //
+        unset($e);
+        //排序
+          $order=$table.'.';
+          $order.=isset($menu['sort_field'])?$menu['sort_field']:'id';
+          $order.=" ";
+          $order.=isset($menu['sort_rule'])?$menu['sort_rule']:"DESC";
+         // dump($order);exit;
+          $page_size=isset($menu['page_size'])&&$menu['page_size']>0?$menu['page_size']:$this->sys_config['page_size'];
+        //
 
-      $arr=$view->where($where)->order($order)->fetchSql(false)->paginate($page_size,false,['query'=>$input]);
+
+
+          foreach ($s_fields as $key => $e) {
+              
+              if (isset($input[$e['field']])) {
+                // $where.=" and ".$e['field']."='".$input[$e['field']]."'";
+                // $where.=" and ".$e['field']." like '%".$input[$e['field']]."%'";
+                switch ($search_type) {
+                  case 'like':
+                    $where[$e['field']]=["$search_type","%".$input[$e['field']]."%"];
+                    break;
+                  
+                  default:
+                    $where[$e['field']]=["$search_type",$input[$e['field']]];
+                    break;
+                }
+                $sss_fields=$e['field'];
+                $sss_keys=$input[$e['field']];
+                
+              }
+          }
+          unset($e);
+
+         
+        if ($do_export==1) {
+          $arr=$view->where($where)->order($order)->fetchSql(false)->select();
+          export_excel($fields,$arr);exit;
+        }else{
+          $arr=$view->where($where)->order($order)->fetchSql(false)->paginate($page_size,false,['query'=>$input]);
+        }
+        
+         
+        if ($menu['is_recursive']==1) {
+
+          $recursive_param=!empty($menu['recursive_param'])?$menu['recursive_param']:'up_id';
+          $arr_tree=$arr;
+          $arr=getTree($arr,$recursive_param);
+          
+          unset($GLOBALS['tree']);
+          if ($arr=='') {
+            $arr=$arr_tree;
+          }
+        }
+      }else{
+          $arr=[];
+      }
+      // $arr=getTree($arr);
       // dump($arr);exit;
       // dump($where);exit;
 
@@ -288,7 +308,7 @@ class common extends Controller
       //     $arr=[];
       // }
       // dump($_SERVER["QUERY_STRING"]);exit;
-      // $arr=db($tb)->paginate(10,true,['type'=>'bootstrap','var_page' => 'page']);
+      // $arr=Db::name($tb)->paginate(10,true,['type'=>'bootstrap','var_page' => 'page']);
       // dump($menu);exit;
       $this->assign("search_type",$search_type);
       $this->assign("list",$arr);
@@ -304,7 +324,12 @@ class common extends Controller
       return $this->fetch();
     }
 
-
+/**
+ * 编辑数据
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T18:35:03+0800
+ */
     public function edit_data(){
       // $model_id=input("get.model_id",0);
       $menu_id=input("get.menu_id",'');
@@ -319,7 +344,7 @@ class common extends Controller
       $model=get_model($model_id);
       $fields=get_fields($model_id,['a.is_edit'=>1]);
       // dump($fields);exit;
-      $arr=db($model['table'])->where("id",$id)->find();
+      $arr=Db::name($model['table'])->where("id",$id)->find();
 
     if ($id>0) {
       # code...
@@ -329,21 +354,24 @@ class common extends Controller
       
         $refer=$_SERVER['HTTP_REFERER'];
         $refer=parse_url($refer);
-        $refer=explode('&', $refer['query']);
-        foreach ($refer as $key => $e) {
-          $arr88=explode('=', $e);
-          if ($arr88[0]!='menu_id') {
-           
-              $arr[$arr88[0]]=$arr88[1];
-            
+        if (isset($refer['query'])) {
+          $refer=explode('&', $refer['query']);
+          foreach ($refer as $key => $e) {
+            $arr88=explode('=', $e);
+            if ($arr88[0]!='menu_id') {
+             
+                $arr[$arr88[0]]=$arr88[1];
               
+                
+            }
           }
         }
+
 
       }
     }
 
-    // $tab=db("sys_field_tab")->where("mid",$model_id)->order("sort asc")->select();
+    // $tab=Db::name("sys_field_tab")->where("mid",$model_id)->order("sort asc")->select();
     // $new_arr=[];
     // foreach ($arr as $key => $e) {
     //   if ($e['tab']) {
@@ -358,10 +386,16 @@ class common extends Controller
           "id"=>$id,
           "model_id"=>$model_id,
           "menu_id"=>$menu_id,
+          "menu"=>$menu,
         ]);
       return $this->fetch();
     }
-
+/**
+ * 数据详情
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T18:35:15+0800
+ */
     public function data_detail(){
         // $model_id=input("get.model_id",0);
         $menu_id=input("get.menu_id",'');
@@ -373,7 +407,7 @@ class common extends Controller
         check_auth(5,$menu_id);
         
         $fields=get_fields_search($model_id,['is_edit'=>1]);
-        $arr=db($model['table'])->where("id",$id)->find();
+        $arr=Db::name($model['table'])->where("id",$id)->find();
         
         $this->assign([
             "list"=>$arr,
@@ -384,7 +418,12 @@ class common extends Controller
           ]);
         return $this->fetch();
     }
-
+/**
+ * 保存数据
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T18:35:28+0800
+ */
     public function do_edit_data(){
       // $model_id=input("get.model_id",'');
       $menu_id=input("get.menu_id",'');
@@ -400,7 +439,7 @@ class common extends Controller
       }
       
       $model=get_model($model_id);
-      $fields=db("sys_fields")->where("model_id",$model['id'])->where("is_edit",1)->order("sort asc")->select();
+      $fields=Db::name("sys_fields")->where("model_id",$model['id'])->where("is_edit",1)->order("sort asc")->select();
 
       $data=filter_input_data($data,$fields);
 
@@ -408,19 +447,24 @@ class common extends Controller
       // dump($data);exit;
       if ($id>0) {
         // $data['u_time']=time();
-        db($model['table'])->where("id",$id)->strict(false)->update($data);
+        Db::name($model['table'])->where("id",$id)->strict(false)->update($data);
         case_model_id($model_id,$id,$data);//针对每个表不同的处理
         ejson(1,'更新成功');
       }else{
         $data['c_time']=time();
         $data['status']=1;
-        $id=db($model['table'])->strict(false)->insertGetId($data);
+        $id=Db::name($model['table'])->strict(false)->insertGetId($data);
         case_model_id($model_id,$id,$data);//针对每个表不同的处理
         ejson(1,'添加成功');
       }
 
     }
-
+/**
+ * 删除数据
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T18:35:43+0800
+ */
     public function del_data(){
         $id=input("get.id",0);
         // $model_id=input("get.model_id",0);
@@ -439,14 +483,41 @@ class common extends Controller
           check_auth(4,$menu_id);
         }
 
-        $res=db($model['table'])->delete($id);
+        $fields=get_table_fields($model['table']);
+        $is_sys=0;
+        foreach ($fields as $key => $e) {
+          if ($e['id']=='is_sys') {
+            $is_sys=1;
+          }
+        }
+        if ($is_sys==1) {
+          foreach ($id as $key => $e) {
+            $arr=Db::name($model['table'])->where('id',$e)->field("is_sys,id")->find();
+            if ($arr['is_sys']==1) {
+              ejson(-1,'记录'.$e.'为系统内容不可删除');
+            }else{
+              Db::name($model['table'])->delete($e);
+            }
+          }
+          $res=1;
+        }else{
+          // dump($fields);exit;
+          $res=Db::name($model['table'])->delete($id);
+        }
+
+
         if ($res>0) {
             ejson(1,'删除成功');
         }else{
             ejson(-1,'删除失败');
         }
     }
-
+/**
+ * 修改状态
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T18:35:56+0800
+ */
     public function change_status(){
       $id=input("get.id",0);
       $menu_id=input("get.menu_id",'');
@@ -470,15 +541,56 @@ class common extends Controller
         
       }
 
-      $res=db($model['table'])->where("id",$id)->update($data);
+      $res=Db::name($model['table'])->where("id",$id)->update($data);
       if ($res>0) {
         ejson(1,'操作成功');
       }else{
-         ejson(-1,'操作失败');
+         ejson(1,'操作成功');
       }
 
     }
 
+
+    /**
+     * 修改字段值
+     * @return   [type]                   [description]
+     * @Author   wxy                      <www.b9n9.com>
+     * @DateTime 2017-07-11T09:59:41+0800
+     */
+    public function change_field_value(){
+      $id=input("get.id",0);
+      $menu_id=input("get.menu_id",'');
+      // $field=input("get.field",'');
+      $menu=get_menu($menu_id);
+      $model_id=$menu['model_id'];
+      $model=get_model($model_id);
+
+
+
+
+      $data=input("get.");
+      unset($data['id']);
+      unset($data['menu_id']);
+    
+
+      if (empty($data)) {
+        ejson(-1,'操作失败');
+      }
+
+      $res=db($model['table'])->where("id",$id)->update($data);
+      if ($res>0) {
+        ejson(1,'操作成功');
+      }else{
+        ejson(1,'操作成功');
+      }
+
+    }
+/**
+ * 修改排序
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T18:36:11+0800
+ */
     public function change_sort(){
       $id=input("get.id",0);
       $menu_id=input("get.menu_id",'');
@@ -493,7 +605,7 @@ class common extends Controller
 
 
 
-      $res=db($model['table'])->where("id",$id)->update($data);
+      $res=Db::name($model['table'])->where("id",$id)->update($data);
       if ($res>0) {
         ejson(1,'操作成功');
       }else{
@@ -501,7 +613,12 @@ class common extends Controller
       }
 
     }
-
+/**
+ * 角色权限设置
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T18:36:27+0800
+ */
     public function role_auth(){
       $id=input("get.id",0);
       $menu_id=input("get.menu_id",'');
@@ -511,7 +628,7 @@ class common extends Controller
 
       $model_id=$menu['model_id'];
       $model=get_model($model_id);
-      $arr=db($model['table'])->where("id",$id)->find();
+      $arr=Db::name($model['table'])->where("id",$id)->find();
       $chose_auth=json_decode($arr['auth_ids'],true);
       // dump($chose_auth);exit;
       $auth=get_all_auth();
@@ -525,7 +642,12 @@ class common extends Controller
         ]);
       return $this->fetch();
     }
-
+/**
+ * 保存权限
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T18:36:44+0800
+ */
     public function save_role_auth(){
       $id=input("get.id",0);
       $menu_id=input("get.menu_id",0);
@@ -534,7 +656,7 @@ class common extends Controller
       $data=input("post.");
       $data=json_encode($data);
       $map['auth_ids']=$data;
-      $res=db("sys_role")->where("id",$id)->update($map);
+      $res=Db::name("sys_role")->where("id",$id)->update($map);
       if ($res>0) {
         ejson(1,'操作成功');
       }else{
@@ -543,7 +665,12 @@ class common extends Controller
     }
 
 
-
+    /**
+     * 上传文件
+     * @return   [type]
+     * @Author   wxy                      <www.b9n9.com>
+     * @DateTime 2017-07-08T18:37:07+0800
+     */
     public function uploadify(){
       $targetFolder = '/uploads'; // Relative to the root
       $str=date('YmdHis') . substr(implode(NULL, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8);
@@ -583,7 +710,12 @@ class common extends Controller
 
       return $this->fetch();
     }
-
+    /**
+     * 退出
+     * @return   [type]
+     * @Author   wxy                      <www.b9n9.com>
+     * @DateTime 2017-07-08T18:37:27+0800
+     */
     public function login_out(){
       session("admin_id",null);
       session_destroy();

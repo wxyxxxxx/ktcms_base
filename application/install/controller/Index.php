@@ -17,7 +17,9 @@ class Index extends Controller
     }
 
     public function index(){
-
+       dump(config("database"));
+        // $config_con =read_file(ROOT_PATH."application/database.php");
+        // dump($config_con);exit;
         if(!file_exists(ROOT_PATH."application/ktcms.lock"))
         {
             $is_lock=0; 

@@ -27,7 +27,35 @@
  <link href="__PUBLIC__/static/admin/css/plugins/toastr/toastr.min.css" rel="stylesheet">
  <script type="text/javascript">
      toastr.options = {
-       "positionClass": "toast-top-full-width",
+       // "positionClass": "toast-top-full-width",
+       "positionClass": "toast-top-right",
      }
+     layer.config({
+       skin: 'layer-ext-moon'
+     })
  </script>
+ <style type="text/css">
+    /*layui-layer */
+    /* body .demo-class .layui-layer-title{background:#1ab394; color:#fff; border: none;}
+     body .demo-class .layui-layer-btn{border-top:1px solid #1ab394}
+     body .demo-class .layui-layer-btn a{background:#1ab394;}
+     body .demo-class .layui-layer-btn .layui-layer-btn1{background:#1c84c6;color:#fff }
+     body .demo-class {border: none!important;box-shadow: 1px 1px 50px rgba(0,0,0,0.3) !important;}*/
+
+     body .layer-ext-moon .layui-layer-title{background:#1ab394 !important; color:#fff !important; border: none;}
+     /*body .demo-class .layui-layer-btn{border-top:1px solid #1ab394}*/
+     body .layer-ext-moon .layui-layer-btn a{background:#1ab394 !important;}
+     body .layer-ext-moon .layui-layer-btn .layui-layer-btn1{background:#1c84c6 !important;color:#fff !important}
+     body .layer-ext-moon {border: none!important;box-shadow: 1px 1px 50px rgba(0,0,0,0.3) !important;}
+ </style>
+
+
+ <style type="text/css">
+     #wrapper,.navbar-static-side,.page-tabs a.active{background-color: {$sys_config.admin_color}}
+     /*.nav>li.active{background:#42485B}*/
+     .navbar-default .nav>li>a:focus, .navbar-default .nav>li>a:hover{background-color: #00C1DE}
+
+     table tr:hover{background-color: #eee}
+     .w_btn{margin-left: 5px !important;}
+ </style>
 </head>

@@ -72,6 +72,7 @@ class App
 
         try {
             $config = self::initCommon();
+            
             if (defined('BIND_MODULE')) {
                 // 模块/控制器绑定
                 BIND_MODULE && Route::bind(BIND_MODULE);

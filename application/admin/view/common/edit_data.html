@@ -9,8 +9,14 @@
 <script src="/static/admin/js/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
 
         <script type="text/javascript" charset="utf-8" src="/static/ueditor/ueditor.config.js"></script>
-            <script type="text/javascript" charset="utf-8" src="/static/ueditor/ueditor.all.min.js"> </script>
+            <!-- <script type="text/javascript" charset="utf-8" src="/static/ueditor/ueditor.all.min.js"> </script> -->
+            <script type="text/javascript" charset="utf-8" src="/static/ueditor/ueditor.all.js"> </script>
          <script type="text/javascript" charset="utf-8" src="/static/ueditor/lang/zh-cn/zh-cn.js"></script>
+
+         <style type="text/css">
+           .chosen-container{min-width: 253px;}
+           .w_red{border: 1px solid red}
+         </style>
 <body class="gray-bg">
     <div class="wrapper wrapper-content  ">
 
@@ -36,7 +42,7 @@
             </ul>
             <div class="tab-content">
             {volist name="fields" id="vov"}
-                <div id="tab-{$vov.tab_id}" class="tab-pane active">
+                <div id="tab-{$vov.tab_id}" class="tab-pane {eq name='i' value='1'}active{/eq}">
                     <div class="panel-body">
                                    {volist name="vov.child" id="vo"}
                                                   <div class="form-group">
@@ -67,21 +73,25 @@
                                                       <div class="col-sm-{$vo.width}">
                                                           {switch name="vo.edit_type"}
                                                               {case value="1"}
-                                                                <input name="{$vo.field}" value="{$list[$vo['field']]}" type="text" class="form-control"> 
+                                                                <input name="{$vo.field}" value="{$list[$vo['field']]}" type="text" class="form-control w_rule" rule="{$vo.rule}" require="{$vo.is_allow_null}">
+
+                                                              {/case}
+                                                              {case value="20"}
+                                                                <input name="{$vo.field}" value="{$list[$vo['field']]}" type="text" readonly='readonly' class="form-control w_rule" rule="{$vo.rule}" require="{$vo.is_allow_null}">
                                                               {/case}
                                                               {case value="17"}
-                                                                <input name="{$vo.field}" value="{$list[$vo['field']]}" type="password" class="form-control">
+                                                                <input name="{$vo.field}" value="{$list[$vo['field']]}" type="password" class="form-control w_rule" rule="{$vo.rule}" require="{$vo.is_allow_null}">
                                                               {/case}
                                                               {case value="2"}
-                                                                <input name="{$vo.field}" value="{$list[$vo['field']]}" type="number" class="form-control">
+                                                                <input name="{$vo.field}" value="{$list[$vo['field']]}" type="number" class="form-control w_rule" rule="{$vo.rule}" require="{$vo.is_allow_null}">
                                                               {/case}
                                                               {case value="3"}
-                                                              <textarea class="form-control" name="{$vo.field}">{$list[$vo['field']]}</textarea>
+                                                              <textarea  name="{$vo.field}" class="form-control w_rule" rule="{$vo.rule}" require="{$vo.is_allow_null}">{$list[$vo['field']]}</textarea>
                                                               {/case}
 
                                                                {case value="4"}
                                                                    <?php  
-                                                                       $radio_arr=get_data_from($vo['data_from']);
+                                                                       $radio_arr=get_data_from($vo['data_from'],$menu,$vo['field']);
                                                                    ?>
                                                                    {volist name="$radio_arr" id="rr"}
                                                                    <div class="checkbox-inline i-checks">
@@ -95,7 +105,7 @@
 
                                                               {case value="5"}
                                                                   <?php  
-                                                                      $data_arr=get_data_from($vo['data_from']);
+                                                                      $data_arr=get_data_from($vo['data_from'],$menu,$vo['field']);
                                                                   ?>
                                                                   {volist name="$data_arr" id="dd"}
 
@@ -111,7 +121,7 @@
 
                                                                {case value="16"}
                                                                    <?php  
-                                                                       $data_arr=get_data_from($vo['data_from']);
+                                                                       $data_arr=get_data_from($vo['data_from'],$menu,$vo['field']);
                                                                    ?>
                                                                    {volist name="$data_arr" id="dd"}
 
@@ -130,7 +140,7 @@
 
                                                               {case value="6"}
                                                                   <?php 
-                                                                      $select=get_data_from($vo['data_from']);
+                                                                      $select=get_data_from($vo['data_from'],$menu,$vo['field']);
                                                                   ?>
                                                                     <select name="{$vo.field}" class="form-control">
                                                                     {volist name="$select" id="ss"}
@@ -141,7 +151,7 @@
 
                                                               {case value="7"}
                                                                   <?php 
-                                                                      $select=get_data_from($vo['data_from']);
+                                                                      $select=get_data_from($vo['data_from'],$menu,$vo['field']);
                                                                       $select_arr=$list[$vo['field']];
                                                                       $select_arr=explode(",",rtrim($select_arr,','));
                                                                   ?>
@@ -158,7 +168,7 @@
                                                               {/case}
                                                               {case value="8"}
                                                                   <?php 
-                                                                      $select=get_data_from($vo['data_from']);
+                                                                      $select=get_data_from($vo['data_from'],$menu,$vo['field']);
                                                                   ?>
                                                                   <select name="{$vo.field}" data-placeholder="选择..." class="chosen-select form-control" tabindex="2">
                                                                       <option value="0">请选择</option>
@@ -491,9 +501,14 @@
                                                               {case value="18"}
                                                                 <input name="{$vo.field}" value="{$list[$vo['field']]}" type="hidden" class="form-control">
                                                               {/case}
-
+                                                              {case value="19"}
+                                                                {assign name="is_19" value="1"}
+                                                              <div class="input-group m-b"><input id="w_{$vo.field}" name="{$vo.field}" value="{$list[$vo['field']]}" type="text" class="form-control"><span class="input-group-btn">
+                                            <button type="button" aid="w_{$vo.field}" class="w_fontawesome btn btn-sm btn-primary"><i class="{$list[$vo['field']]}"></i></button> </span>
+                                                                </div>
+                                                              {/case}
                                                               {default /}
-                                                                <input name="{$vo.field}" value="" type="text" class="form-control">
+                                                                <input name="{$vo.field}" value="" type="text" class="form-control w_rule" rule="{$vo.rule}" require="{$vo.is_allow_null}">
                                                           {/switch}
                                                            
                                                       </div>
@@ -529,11 +544,26 @@
 
 
 
+
 <script type="text/javascript">
   
   $(function(){
     $(".w_sb").click(function(){
       var data=$("#form_s").serialize();
+      var is_rule_check=1;
+      $(".w_rule").each(function(){
+        if (check_rule($(this))==false) {
+          is_rule_check=0;
+        }
+        
+
+      })
+
+      if (is_rule_check==0) {
+        // alert();
+        return false;
+      }
+      // return false;
       $.post("{:url('admin/common/do_edit_data')}?menu_id={$menu_id}&id={$id}",data,function(res){
         res=eval("("+res+")");
         if (res.code==1) {
@@ -600,6 +630,111 @@
     str=str.replace(',,',",");
     inp.val(str);
   }
+
+  function check_rule(pp){
+    var p=pp;
+    var rule=p.attr("rule");
+    var is_require=p.attr("require");
+    var val=p.val();
+    
+    if (val==''&&is_require==0) {
+      return true;
+    }
+    var sp=p.next();
+    rule_arr=rule.split("|");
+    var model=rule_arr[0];
+    var str_len=new Array();
+    if (rule_arr[1]) {
+       str_len=rule_arr[1].split(',');
+      
+    }
+    if (model=='') {return true;}
+
+    var msg='';
+    switch(model){
+      case("text"):
+
+          break;
+      case("number"):
+          if(isNaN(val)||val==''){
+            msg="请输入数字";
+          }
+          break;
+      case("phone"):
+          if (!val.match(/^(((1[0-9][0-9]{1})|159|153)+\d{8})$/)) {
+           msg="手机号格式不正确";
+          } 
+          break; 
+      case("email"):
+          if (!val.match(/^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/)){
+          msg="邮箱格式不正确";
+          } 
+          break;   
+    }
+
+    if (str_len.length>0) {
+      if (val.length>str_len[1]) {
+        msg='长度不能大于'+str_len[1];
+      }
+      if (val.length<str_len[0]) {
+        msg='长度不能小于'+str_len[0];
+      }
+    }
+  // if (val==''&&is_require==1) {
+  //   msg='请填写内容';
+  // }
+    if (msg!='') {
+      p.addClass("w_red");
+      if(sp.length==0){
+        p.after("<span style='color:red'>"+msg+"</span>");
+      }else{
+        p.next().html(msg);
+      }
+      return false;
+    }else{
+      p.removeClass("w_red");
+      p.next().remove();
+      return true;
+    }
+
+  }
+  $(function(){
+
+
+
+    $(".w_rule").blur(function(){
+      check_rule($(this));
+
+    })
+
+    var fontawesome;
+    $(".w_fontawesome").click(function(){
+      // alert();
+      var aid=$(this).attr("aid");
+     $(".www_fontawesome").attr("aid",aid);
+
+      fontawesome=layer.open({
+        type: 1,
+        title: "图标",
+        shadeClose: true,
+        closeBtn: 1,
+        shade: false,
+        anim:6,
+        maxmin: true, //开启最大化最小化按钮
+        style:"demo-class",
+       area: ['800px', '600px'],
+        content: $('.www_fontawesome')
+      });
+    })
+
+    $(".www_fontawesome .fa-hover").click(function(){
+      var str=$(this).find('i').attr("class");
+      var aid=$(".www_fontawesome").attr("aid");
+      $("#"+aid).val(str);
+      $("#"+aid).next().find("i").attr("class",str);
+      layer.close(fontawesome);
+    })
+  })
 </script>
 
     <script type="text/javascript">
@@ -621,12 +756,13 @@
                 }
             };
             for (var selector in config) $(selector).chosen(config[selector]);
+
     })
     </script>
 
-
-
-
+{notempty name="is_19"}
+{include file="../application/admin/view/common/fontawesome.html"}
+{/notempty}
 </body>
 
 

@@ -3,7 +3,13 @@ use think\Cache;
 use think\Db;
 
 
-
+/**
+ * 获取表信息
+ * @param    string
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T17:24:11+0800
+ */
 function table_fields_info($table=''){
 
 	$arr = Db::query("show full columns from `$table`");
@@ -22,15 +28,27 @@ function table_fields_info($table=''){
 
 	return $arr;
 }
-
+/**
+ * 获取表字段
+ * @param    string
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T17:24:37+0800
+ */
 function table_fields($table=''){
-	$arr=db("sys_fields")->where("table",$table)->select();
+	$arr=Db::name("sys_fields")->where("table",$table)->select();
 	return $arr;
 }
 
-
+/**
+ * 获取后台显示菜单
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T17:25:01+0800
+ */
 function get_admin_menus(){
   $admin=session("admin");
+  $admin_type=session("admin_type");
   $auth_arr=json_decode($admin['auth_ids'],true);
   // dump($auth_arr);exit;
   if (!isset($auth_arr)) {
@@ -42,17 +60,14 @@ function get_admin_menus(){
   }
   unset($e);
 
- if ($admin['id']==0) {
- 	$arr66=db("sys_menu")->where("status",1)->field("id")->select();
- 	foreach ($arr66 as $key => $e) {
- 		$menu_ids[]=$e['id'];
- 	}
- 	// $where="1=1";
- 	$where['id']=['in',$menu_ids];
+ if ($admin_type==1) {
+ 	$where['id']=['gt',0];
  }else{
  	$where['id']=['in',$menu_ids];
+ 	$where['status']=['eq',1];
  }
-  $arr_top=db("sys_menu")->distinct(true)->where("status",1)->where($where)->field("up_id")->select();
+
+  $arr_top=Db::name("sys_menu")->distinct(true)->where($where)->field("up_id")->select();
 
   // dump($menu_ids);exit;
   foreach ($arr_top as $key => $e) {
@@ -60,16 +75,29 @@ function get_admin_menus(){
   }
   unset($e);
 
-  $arr2=db("sys_menu")->where("status",1)->where('id','in',$menu_ids)->order("sort asc")->select();
-  // dump($arr2);exit;
+ if ($admin_type==1) {
+ 	$where['id']=['gt',0];
+ }else{
+ 	$where['id']=['in',$menu_ids];
+ 	$where['status']=['eq',1];
+ }
+
+  $arr2=Db::name("sys_menu")->where($where)->order("sort asc")->select();
+  
   $new_arr=digui_menu($arr2);
-  // dump($new_arr);exit;
+ 
   $nn=make_menus($new_arr);
-  // dump($nn);exit;
+
   return $nn;
   // unset($e);
 }
-
+/**
+ * 生成菜单
+ * @param    [type]
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T17:25:56+0800
+ */
 function make_menus($arr){
 
 	
@@ -98,6 +126,14 @@ function make_menus($arr){
 	return $str;
 }
 
+/**
+ * 检查是否有操作权限
+ * @param    [type]
+ * @param    [type]
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T17:26:07+0800
+ */
 function check_auth($operation_id,$menu_id){
 	$admin=session("admin");
 	$auth_arr=json_decode($admin['auth_ids'],true);
@@ -119,13 +155,19 @@ function check_auth($operation_id,$menu_id){
 
 
 function get_all_auth(){
-	$arr2=db("sys_menu")->where("status",1)->field("id,name,operation,up_id")->order("sort asc")->select();
+	$arr2=Db::name("sys_menu")->where("status",1)->field("id,name,operation,up_id")->order("sort asc")->select();
 
 	$new_arr=digui_menu($arr2);
 	return $new_arr;
 	// dump($new_arr);exit;
 }
-
+/**
+ * [菜单递归显示]
+ * @param    array
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T17:26:33+0800
+ */
 function digui_menu($arr2=array()){
 	$new_arr=[];
 	$arr=[];
@@ -154,39 +196,17 @@ function digui_menu($arr2=array()){
 
 function case_model_id($model_id=0,$id=0,$data=array()){
 	$time=time();
-	// switch ($model_id) {
-	// 	case '1':
-	// 	return;
-	// 		$arr=$data['operation'];
-	// 		$arr=explode(',', $arr);
-	// 		// $data=[];
-	// 		foreach ($arr as $key => $e) {
-	// 			$data=['menu_id'=>$id,'operation_id'=>$e,'c_time'=>$time];
-	// 			$arr=db("sys_auth")->where("menu_id",$id)->where("operation_id",$e)->find();
-	// 			if (!$arr) {
-	// 				db("sys_auth")->insert($data);
-	// 			}
-	// 		}
-	// 		// db("sys_auth")->insertAll($data);
-	// 		unset($e);
-	// 		break;
-		
-	// 	default:
-	// 		# code...
-	// 		break;
-	// }
 }
 
-
+/**
+ * 获取菜单对应操作
+ * @param    [type]
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T17:27:14+0800
+ */
 function get_sys_operation($ids){
-	// if ($type>0) {
-	// 	$where="type=$type";
-	// }else{
-	// 	$where="1=1";
-	// }
-
-
-	$arr=db("sys_operation")->where("id",'in',$ids)->order("sort asc")->select();
+	$arr=Db::name("sys_operation")->where("id",'in',$ids)->order("sort asc")->select();
 	$new_arr=['top'=>[],'list'=>[]];
 	foreach ($arr as $key => $e) {
 		if ($e['type']==1) {
@@ -197,38 +217,69 @@ function get_sys_operation($ids){
 	}
 	return $new_arr;
 }
-
+/**
+ * 获取后台所有操作选项
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T17:27:54+0800
+ */
 function get_operation(){
-	return $arr=db("sys_operation")->order("sort asc")->select();
+	return $arr=Db::name("sys_operation")->order("sort asc")->select();
 }
 
 
-
+/**
+ * 上传图片限制
+ * @param    string
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T17:28:17+0800
+ */
+// function upload_set($rule=''){
+// 	$arr=json_decode($rule,true);
+// 	if (!isset($arr['size'])) {
+// 		$arr['size']='999999999';
+// 	}
+// 	if (!isset($arr['file_type'])) {
+// 		$arr['file_type']='*.*';
+// 	}
+// 	return $arr;
+// }
 function upload_set($rule=''){
-	$arr=json_decode($rule,true);
-	if (!isset($arr['size'])) {
-		$arr['size']='999999999';
+	$arr=explode('|', $rule);
+	$res=[];
+	if (!isset($arr[2])) {
+		$res['size']='999999999';
+	}else{
+		$res['size']=$arr[2];
 	}
-	if (!isset($arr['file_type'])) {
-		$arr['file_type']='*.*';
+	if (!isset($arr[1])) {
+		$res['file_type']="*";
+	}else{
+		$res['file_type']=$arr[1];
 	}
-	return $arr;
-}
 
-
-function get_nav(){
-	$arr=db("nav")->order("sort asc")->select();
-	// foreach ($arr as $key => &$e) {
-	// 	$e['parent_id']=$e['up_id'];
-	// }
-	// unset($e);
-	// $res=make_option_tree_for_select($arr);
-
-	$res=getTree($arr);
-	 unset($GLOBALS['tree']);
 	return $res;
-	// dump($res);exit;
 }
+/**
+ * [获取导航]
+ * @Author   wxy
+ * @DateTime 2017-07-08T17:16:42+0800
+ * @return   [type]
+ */
+// function get_nav(){
+// 	$arr=Db::name("nav")->order("sort asc")->select();
+// 	// foreach ($arr as $key => &$e) {
+// 	// 	$e['parent_id']=$e['up_id'];
+// 	// }
+// 	// unset($e);
+// 	// $res=make_option_tree_for_select($arr);
+
+// 	$res=getTree($arr);
+// 	 unset($GLOBALS['tree']);
+// 	return $res;
+// 	// dump($res);exit;
+// }
 /**
  * 
  * 遍历文件夹目录
@@ -247,7 +298,13 @@ function folder_list($dir){
  return $dirInfo;
 }
 
-
+/**
+ * 获取default下的模版文件
+ * 
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T17:54:09+0800
+ */
 function get_templet(){
 	$dir=ROOT_PATH.'public/templets/default/index/';
 	$arr=[];
@@ -263,126 +320,49 @@ function get_templet(){
 	return $arr;
 }
 
-
-function make_tree($arr){
-    if(!function_exists('make_tree1')){
-        function make_tree1($arr, $parent_id=0){
-            $new_arr = array();
-
-            foreach($arr as $k=>$v){
-            	// dump($v);exit;
-                if($v['parent_id'] == $parent_id){
-                    $new_arr[] = $v;
-                    unset($arr[$k]);
-                }
-            }
-            foreach($new_arr as &$a){
-                $a['children'] = make_tree1($arr, $a['id']);
-            }
-            return $new_arr;
-        }
-    }
-    return make_tree1($arr);
-}
- 
-function make_tree_with_namepre($arr)
-{
-    $arr = make_tree($arr);
-    if (!function_exists('add_namepre1')) {
-        function add_namepre1($arr, $prestr='') {
-            $new_arr = array();
-            foreach ($arr as $v) {
-                if ($prestr) {
-                    if ($v == end($arr)) {
-                        $v['name'] = $prestr.'└─ '.$v['name'];
-                    } else {
-                        $v['name'] = $prestr.'├─ '.$v['name'];
-                    }
-                }
- 
-                if ($prestr == '') {
-                    $prestr_for_children = '　 ';
-                } else {
-                    if ($v == end($arr)) {
-                        $prestr_for_children = $prestr.'　　 ';
-                    } else {
-                        $prestr_for_children = $prestr.'│　 ';
-                    }
-                }
-                $v['children'] = add_namepre1($v['children'], $prestr_for_children);
- 
-                $new_arr[] = $v;
-            }
-            return $new_arr;
-        }
-    }
-    return add_namepre1($arr);
-}
- 
 /**
- * @param $arr
- * @param int $depth，当$depth为0的时候表示不限制深度
- * @return string
+ * 递归显示列表
+ * @param    [type]
+ * @param    string
+ * @param    integer
+ * @param    integer
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T17:55:20+0800
  */
-
-function make_option_tree_for_select($arr, $depth=0)
-{
-    $arr = make_tree_with_namepre($arr);
-    if (!function_exists('make_options1')) {
-        function make_options1($arr, $depth, $recursion_count=0, $ancestor_ids='') {
-            $recursion_count++;
-            $str = [];
-            foreach ($arr as $v) {
-                $str[]= ['id'=>$v['id'],'name'=>$v['name']];
-                if ($v['parent_id'] == 0) {
-                    $recursion_count = 1;
-                }
-                if ($depth==0 || $recursion_count<$depth) {
-                    // = ;
-                    $str=array_merge($str,make_options1($v['children'], $depth, $recursion_count, $ancestor_ids.','.$v['id']));
-                }
-    
-            }
-            return $str;
-        }
-    }
-    return make_options1($arr, $depth);
-}
-function make_option_tree_for_select22($arr, $depth=0)
-{
-    $arr = make_tree_with_namepre($arr);
-    if (!function_exists('make_options1')) {
-        function make_options1($arr, $depth, $recursion_count=0, $ancestor_ids='') {
-            $recursion_count++;
-            $str = '';
-            foreach ($arr as $v) {
-                $str .= "<option value='{$v['id']}' data-depth='{$recursion_count}' data-ancestor_ids='".ltrim($ancestor_ids,',')."'>{$v['name']}</option>";
-                if ($v['parent_id'] == 0) {
-                    $recursion_count = 1;
-                }
-                if ($depth==0 || $recursion_count<$depth) {
-                    $str .= make_options1($v['children'], $depth, $recursion_count, $ancestor_ids.','.$v['id']);
-                }
- 
-            }
-            return $str;
-        }
-    }
-    return make_options1($arr, $depth);
-}
-function getTree($data,$pid=0,$step=0){
+function getTree($data,$recursive_param='up_id',$pid=0,$step=0){
 	global $tree;
 	foreach ($data as $key => $e) {
-		if ($e['up_id']==$pid) {
-			$flg = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',$step);
+
+		if ($e[$recursive_param]==$pid) {
+            $flg='';
+            if ($step==0) {
+                // $flg = "◆&nbsp;";
+                $flg = "|-&nbsp;";
+            }
+			if ($step>0) {
+                // $flg = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',$step);
+                // $flg.="▶";
+                $flg = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',$step);
+                $ggf="|-";
+                $flg.=$ggf."&nbsp;";
+
+            }
 			$e['name']=$flg.$e['name'];
 			$tree[]=$e;
-			getTree($data,$e['id'],$step+1);
+			getTree($data,$recursive_param,$e['id'],$step+1);
 		}
 	}
+    
 	return $tree;
 }
-
+/**
+ * 获取要查找的表名
+ * @param    string
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T17:55:39+0800
+ */
 function get_search_table($str=''){
 	$arr2=explode('|',$str);
 	if (isset($arr2[1])) {
@@ -392,19 +372,224 @@ function get_search_table($str=''){
 	}
 	return $arr2[0];
 }
-function build_search_condition($model_id=0){
-	$input[$e['field']];
-	$arr=db("sys_fields")->where("model_id",$model_id)->where("is_search",1)->order("sort asc")->select();
-	$str='';
+/**
+ * [生成查询条件 已弃用]
+ * @param    integer
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T17:56:20+0800
+ */
+// function build_search_condition($model_id=0){
+// 	$input[$e['field']];
+// 	$arr=Db::name("sys_fields")->where("model_id",$model_id)->where("is_search",1)->order("sort asc")->select();
+// 	$str='';
+// 	foreach ($arr as $key => $e) {
+// 		if (isset($input[$e['field']])) {
+
+// 		  $stable=get_search_table();
+// 		  if ($stable!='') {
+// 		  	$str.=" and ".$e['field']." like '%".$input[$e['field']]."%'";
+// 		  }
+// 		  $str.=" and ".$e['field']." like '%".$input[$e['field']]."%'";
+// 		}
+// 	}
+
+// }
+
+/**
+ * 获取全部权限
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T17:57:41+0800
+ */
+function get_full_auth_ids(){
+	$arr=Db::name("sys_menu")->field("id,operation")->select();
+	$arr2=[];
 	foreach ($arr as $key => $e) {
-		if (isset($input[$e['field']])) {
-
-		  $stable=get_search_table();
-		  if ($stable!='') {
-		  	$str.=" and ".$e['field']." like '%".$input[$e['field']]."%'";
-		  }
-		  $str.=" and ".$e['field']." like '%".$input[$e['field']]."%'";
-		}
+		$e['operation']=explode(',', $e['operation']);
+		$arr2[$e['id']]=$e['operation'];
 	}
-
+	$auth=json_encode($arr2);
+	return $auth;
 }
+
+/**
+ * 获取字段类型
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T18:12:30+0800
+ */
+   function get_fields_type(){
+        $arr=db("sys_fieldtype")->select();
+        $new_arr=[];
+        foreach ($arr as $key => $e) {
+        	$new_arr[]=['id'=>$e['id'],'name'=>$e['name']];
+        }
+        return $new_arr;
+        // ejson(1,'获取成功',$arr);
+    }
+  /**
+   * 获取表的所有字段
+   * @param    string
+   * @return   [type]
+   * @Author   wxy                      <www.b9n9.com>
+   * @DateTime 2017-07-08T18:14:28+0800
+   */
+ function get_table_fields($table=""){
+    $arr = Db::query("show full columns from `kt_$table`");	
+ 
+     $new_arr=[];
+     foreach ($arr as $key => $e) {
+     	$new_arr[]=['id'=>$e['Field'],'name'=>$e['Field']];
+     }
+     return $new_arr;
+     // ejson(1,'获取成功',$arr);
+ }
+/**
+ * 返回所有表
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T18:15:14+0800
+ */
+ function get_tables(){
+     $arr=Db::query("show table status");
+     // 
+     $new_arr=[];
+     
+     foreach ($arr as $key => $e) {
+         // $id=substr($e['Name'], 3);
+         $new_arr[]=['id'=>substr($e['Name'], 3),'name'=>$e['Name']];
+         // $new_arr[]=['id'=>ltrim($e['Name'],'kt_'),'name'=>$e['Name']];
+     }
+     
+     // dump($new_arr);exit;
+     return $new_arr;
+   
+ }
+
+/**
+ * 返回字段对应的名称
+ * @param    integer
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T18:15:42+0800
+ */
+ function get_fields_name($model_id=0){
+ 	$arr=db("sys_fields")->where("model_id",$model_id)->select();
+ 	return $arr;
+ }
+/**
+ * 返回系统状态
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T18:25:21+0800
+ */
+ function get_status(){
+     return [['id'=>1,'name'=>'正常'],['id'=>-1,'name'=>'禁用']];
+ }
+/**
+ * 返回所有模型
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T18:25:58+0800
+ */
+ function get_sys_models(){
+    $arr=db("sys_model")->order("id desc")->select();
+    return $arr;
+ }
+/**
+ * 返回系统菜单
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T18:29:14+0800
+ */
+ function get_sys_menus(){
+    $arr=db("sys_menu")->order("sort desc")->select();
+    return $arr;
+ }
+
+/**
+ * 返回某个表里的所有数据
+ * @param    string
+ * @return   [type]
+ * @Author   wxy                      <www.b9n9.com>
+ * @DateTime 2017-07-08T18:29:51+0800
+ */
+ function get_table_data($table='',$where=''){
+     $arr=Db::name($table)->where($where)->select();
+     return $arr;
+ }
+ /**
+  * 返回某个表里的所有数据
+  * @param    string
+  * @return   [type]
+  * @Author   wxy                      <www.b9n9.com>
+  * @DateTime 2017-07-08T18:30:18+0800
+  */
+ function gtd($table='',$where=''){
+      $arr=Db::name($table)->where($where)->select();
+     return $arr;
+ }
+
+
+ function export_excel($fields=[],$arr=[]){
+ 	  error_reporting("E_ALL");
+ 	  
+ 	  require_once VENDOR_PATH.'PHPExcel-1.8/Classes/PHPExcel.php';
+ 	  require_once VENDOR_PATH.'PHPExcel-1.8/Classes/PHPExcel/Writer/Excel2007.php';
+
+ 	  $objPHPExcel = new \PHPExcel();
+ 
+ 	  $objPHPExcel->setActiveSheetIndex(0);
+ 	  $count = count($arr);
+ 	  $AZ=['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+ 	 foreach ($fields as $key => $e) {
+ 	     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($AZ[$key].'1', $e['name']);
+ 	 }
+ 	
+ 	
+ 	  for ($i = 2; $i < $count+2; $i++) {
+
+ 	   foreach ($fields as $key => $e) {
+ 	     // switch ($e['edit_type']) {
+ 	     //   case '4':
+ 	     //   case '5':
+ 	     //   case '6':
+ 	     //   case '7':
+ 	     //   case '8':
+ 	     //     $arr[$i-2][$e['field']]=get_list_show($arr[$i-2][$e['field']],$e['data_from']);
+ 	     //     break;
+ 	     //   case '9':
+ 	     //     $arr[$i-2][$e['field']]=date("Y-m-d H:i:s",$arr[$i-2][$e['field']]);
+ 	     //     break;
+ 	     //   default:
+ 	     //     # code...
+ 	     //     break;
+ 	     // }
+
+ 	  
+ 	       $objPHPExcel->setActiveSheetIndex(0)->setCellValue($AZ[$key]. $i, $arr[$i-2][$e['field']]);
+ 	   }
+ 	  }
+
+ 	$objPHPExcel->setActiveSheetIndex(0);
+ 	  // Rename worksheet
+ 	  $objPHPExcel->getActiveSheet()->setTitle('Simple');
+
+
+
+ 	  ob_end_clean();
+ 	  header("Pragma: public");
+ 	  header("Expires: 0");
+ 	  header("Cache-Control:must-revalidate, post-check=0, pre-check=0");
+ 	  header("Content-Type:application/force-download");
+ 	  header("Content-Type:application/vnd.ms-execl");
+ 	  header("Content-Type:application/octet-stream");
+ 	  header("Content-Type:application/download");;
+ 	  header('Content-Disposition:attachment;filename='.date("YmdHis").'.xlsx');
+ 	  header("Content-Transfer-Encoding:binary");
+ 	  ob_clean();
+ 	  $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+ 	  $objWriter->save('php://output');
+ 	  exit("导出成功");
+ }

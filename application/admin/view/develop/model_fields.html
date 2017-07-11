@@ -126,7 +126,7 @@
                         <td><input style="width: 50px" type="text" name="" value="{$vo.default}"></td>
                         <td><input type="text" name="" value="{$vo.remark}"></td>
                         <td><input style="width: 50px" type="text" name="" value="{$vo.width}"></td>
-                        <td><input type="text" name="" value="{$vo.data_from}">&nbsp;<button onclick="javascript:w_source_data(this)">+</button></td>
+                        <td><input type="text" name="" value="{$vo.data_from}">&nbsp;<button onclick="javascript:w_source_data(this)">+</button><button onclick="javascript:w_tb(this)">TB</button></td>
                         <td><input type="text" name="" value='{$vo.rule}'></td>
                         <td><input style="width: 50px" type="number" name="" value="{$vo.sort}"></td>
                         
@@ -330,6 +330,43 @@ function del_ff(elem){
     <button onclick="javascript:w_add_source(this)">增加</button>
     <button  onclick="javascript:w_do_add_source(this)" aid="">完成</button>
 </div>
+
+<div class="w_tb" style="display: none">
+    <table>
+        <thead>
+        <!-- <tr>
+            <th>value</th>
+            <th>name</th>
+            <th>操作</th>
+        </tr> -->
+        </thead>
+        <tbody>
+            <tr>
+                <td>模型ID</td>
+                <td><input type="text" id="w_tb_model_id"></td>              
+            </tr>
+            <tr>
+                <td>关联字段</td>
+                <td><input type="text" id="w_tb_connect_id"></td>              
+            </tr>
+            <tr>
+                <td>关联值字段</td>
+                <td><input type="text" id="w_tb_connect_field"></td>              
+            </tr>
+            <tr>
+                <td>显示字段</td>
+                <td><input type="text" id="w_tb_show_field"></td>              
+            </tr>
+            <tr>
+                <td>条件</td>
+                <td><input type="text" id="w_tb_condition"></td>              
+            </tr>
+
+        </tbody>
+    </table>
+    
+    <button  onclick="javascript:w_do_add_tb(this)" aid="">完成</button>
+</div>
 <script type="text/javascript">
 
 var ind='';
@@ -377,6 +414,52 @@ function w_source_data(e){
 
         $("#w_ss").attr("id",'');
       layer.close(ind);
+        
+    }
+
+
+
+    function w_tb(e){
+        $(e).prev().prev().attr("id",'w_ss_tb');
+        var data=$(e).prev().prev().val();
+        
+        if (data!='') {
+            var b=new Array();
+            b=data.split('|');
+            // console.log(b);
+            $("#w_tb_model_id").val(b[1]);
+            $("#w_tb_connect_id").val(b[2]);
+            $("#w_tb_connect_field").val(b[3]);
+            $("#w_tb_show_field").val(b[4]);
+            $("#w_tb_condition").val(b[5]);
+        }
+        ind2=layer.open({
+          type: 1,
+          shade: false,
+          area: ['500px', '300px'],
+          title: false, //不显示标题
+          content: $('.w_tb'), //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+          cancel: function(){
+            $(e).prev().attr("id",'');
+            // layer.msg('捕获就是从页面已经存在的元素上，包裹layer的结构', {time: 5000, icon:6});
+          }
+        });
+    }
+
+    function w_do_add_tb(e){
+        var data='TB';
+        data+='|'+$("#w_tb_model_id").val();
+        data+='|'+$("#w_tb_connect_id").val();
+        data+='|'+$("#w_tb_connect_field").val();
+        data+='|'+$("#w_tb_show_field").val();
+        data+='|'+$("#w_tb_condition").val();
+        
+        if (data!='') {
+            $("#w_ss_tb").val(data);
+        }
+
+        $("#w_ss_tb").attr("id",'');
+      layer.close(ind2);
         
     }
 

@@ -4,21 +4,21 @@ use think\Db;
 use think\Request;
 use think\Controller;
 use think\Cache;
-class admin extends Common
+class admin extends Base
 {   
     public $admin;
     public $admin_id;
 
-    public function _initialize()
-     {
+    // public function _initialize()
+    //  {
  
-        $this->assign("title","WXY");
-        $this->assign("host_url","http://".$_SERVER['SERVER_NAME']);
-        $action       = Request::instance()->action();
-        $this->check_admin_login();
+    //     $this->assign("title","WXY");
+    //     $this->assign("host_url","http://".$_SERVER['SERVER_NAME']);
+    //     $action       = Request::instance()->action();
+    //     $this->check_admin_login();
         
          
-     }
+    //  }
 
      // public function nav_list(){
         
