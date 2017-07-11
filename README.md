@@ -1,5 +1,7 @@
 KTCMS 1.0
 ===============
+
+[KTCMS开发手册](https://www.kancloud.cn/wxyxxxxx/ktcms1_0/346642)
 应用部署目录
 
 
